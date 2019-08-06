@@ -51,21 +51,24 @@
     var cachedSubscriptionData = rcsdk.cache().getItem(subscriptionCacheKey);
 
     if (cachedSubscriptionData) {
-      try { // if subscription is already expired an error will be thrown so we need to capture it
+      try {
         subscription.setSubscription(cachedSubscriptionData); // use the cache
       } catch (e) {
-        console.error('Cannot set subscription data', e);
+        console.error('Cannot set subscription from cache data', e);
+        subscription.setEventFilters([
+          '/restapi/v1.0/account/~/extension/~/telephony/sessions',
+        ]);
       }
     } else {
-      subscription.setEventFilters(['/restapi/v1.0/account/~/extension/~/telephony/sessions']); // explicitly set required events
+      subscription.setEventFilters([
+        '/restapi/v1.0/account/~/extension/~/telephony/sessions',
+      ]);
     }
     subscription.on([subscription.events.subscribeSuccess, subscription.events.renewSuccess], function() {
       rcsdk.cache().setItem(cacheKey, subscription.subscription());
     });
     subscription.on(subscription.events.notification, function(msg) {
-      if (msg.event.indexOf('/telephony/sessions') > -1) {
-        window.rcCallControl.onTelephoneSessionsEvent(msg)
-      }
+      window.rcCallControl.onNotificationEvent(msg)
     });
     subscription.register();
   }
