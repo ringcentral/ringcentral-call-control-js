@@ -144,4 +144,182 @@ export default class Session extends EventEmitter {
     const newParty = response.json();
     return newParty;
   }
+
+  async reject() {
+    await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/reject`
+    );
+  }
+
+  async forward(params: ForwardParams) {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/forward`,
+      params
+    );
+    return response.json();
+  }
+
+  async transfer(params: TransferParams) {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/transfer`,
+      params
+    );
+    return response.json();
+  }
+
+  async toVoicemail() {
+    const result = await this.forward({ voicemail: this._data.extensionId });
+    return result;
+  }
+
+  async flip(params: FlipParams) {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/flip`,
+      params
+    );
+    return response.json();
+  }
+
+  async updateParty(params: PartyParams) {
+    const response = await this._sdk.platform().patch(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}`,
+      params
+    );
+    return response.json();
+  }
+
+  async mute() {
+    const result = await this.updateParty({ muted: true });
+    return result;
+  }
+
+  async unmute() {
+    const result = await this.updateParty({ muted: false });
+    return result;
+  }
+
+  async createRecord() {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings`,
+    );
+    return response.json();
+  }
+
+  async updateRecord(params: RecordParams) {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings/${params.id}`,
+      {
+        active: params.active,
+      }
+    );
+    return response.json();
+  }
+
+  async pauseRecord(id: string) {
+    const result = await this.updateRecord({ id, active: false });
+    return result;
+  }
+
+  async resumeRecord(id: string) {
+    const result = await this.updateRecord({ id, active: true });
+    return result;
+  }
+
+  async supervise(params: SuperviseParams) {
+    const response = await this._sdk.platform().patch(
+      `/account/~/telephony/sessions/${this._data.id}/supervise`,
+      params
+    );
+    return response.json();
+  }
+}
+
+export enum Direction {
+  inbound = 'Inbound',
+  outbound = 'Outbound'
+}
+
+export enum PartyStatusCode {
+  setup = 'Setup', 
+  proceeding = 'Proceeding', 
+  answered = 'Answered', 
+  disconnected = 'Disconnected', 
+  gone = 'Gone', 
+  parked = 'Parked', 
+  hold = 'Hold', 
+  voicemail = 'VoiceMail', 
+  faxReceive = 'FaxReceive', 
+  voicemailScreening = 'VoiceMailScreening'
+}
+
+export interface PartyToFrom {
+  phoneNumber?: string;
+  name?: string;
+  extensionId?: string;
+  extensionNumber?: string;
+}
+
+export interface PartyStatus {
+  code?: PartyStatusCode;
+}
+
+export interface Recording {
+  id: string;
+  active: boolean;
+}
+
+export interface Party {
+  id: string;
+  extensionId?: string;
+  accountId?: string;
+  direction: Direction;
+  to: PartyToFrom;
+  from: PartyToFrom;
+  status: PartyStatus;
+  missedCall: boolean;
+  standAlone: boolean;
+  muted: boolean;
+  conferenceRole?: 'Host' | 'Participant';
+  ringOutRole?: 'Initiator' | 'Target';
+  ringMeRole?: 'Initiator' | 'Target';
+  recordings?: Recording[];
+}
+
+export interface SessionData {
+  id: string;
+  extensionId: string;
+  accountId: string;
+  parties: Party[];
+  creationTime?: string;
+  voiceCallToken?: string;
+}
+
+export interface ForwardParams {
+  phoneNumber?: string;
+  extensionNumber?: string;
+  voicemail?: string;
+}
+
+export interface TransferParams extends ForwardParams {
+  parkOrbit?: string;
+}
+
+export interface FlipParams {
+  callFlipId: string;
+}
+
+export interface PartyParams {
+  muted?: boolean;
+  standAlone?: boolean;
+}
+
+export interface RecordParams {
+  id: string;
+  active: boolean;
+}
+
+export interface SuperviseParams {
+  mode: 'Listen';
+  deviceId: string;
+  extensionNumber: string;
 }
