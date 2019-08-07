@@ -84,6 +84,7 @@ export default class RingCentralCallControl extends EventEmitter {
     await this.loadCurrentExtension();
     await this.loadSessions();
     await this.loadDevices();
+    this.emit('initialized');
   }
 
   public onNotificationEvent(message: SessionMessage) {
@@ -105,7 +106,6 @@ export default class RingCentralCallControl extends EventEmitter {
         this.onSessionStatusUpdated(newSession);
       });
       this._sessionsMap.set(telephonySessionId, newSession);
-      console.log('event:', 'new', JSON.stringify(newSession, null, 2));
       this.emit('new', newSession);
       return;
     }

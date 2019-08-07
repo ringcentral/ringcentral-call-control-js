@@ -105,7 +105,6 @@ export default class Session extends EventEmitter {
         }
         this._data.parties = parties;
         diff.partyDiffs.forEach((partyDiff) => {
-          console.log('event:', partyDiff.key, diff.party)
           this.emit(partyDiff.key, { party: diff.party });
         });
         return;
@@ -228,13 +227,13 @@ export default class Session extends EventEmitter {
     return response.json();
   }
 
-  async pauseRecord(id: string) {
-    const result = await this.updateRecord({ id, active: false });
+  async pauseRecord(recordingId: string) {
+    const result = await this.updateRecord({ id: recordingId, active: false });
     return result;
   }
 
-  async resumeRecord(id: string) {
-    const result = await this.updateRecord({ id, active: true });
+  async resumeRecord(recordingId: string) {
+    const result = await this.updateRecord({ id: recordingId, active: true });
     return result;
   }
 
