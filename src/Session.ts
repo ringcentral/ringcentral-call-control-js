@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
+import RingCentral from 'ringcentral';
 
-function objectEqual(obj1, obj2) {
+function objectEqual(obj1: any, obj2: any) {
   let equal = true;
   if (!obj1 || !obj2) {
     return false;
@@ -20,7 +21,7 @@ function objectEqual(obj1, obj2) {
   return equal;
 }
 
-function diffParty(oldParty, updatedParty) {
+function diffParty(oldParty: Party, updatedParty: Party) {
   const diffs = [];
   updatedParty && Object.keys(updatedParty).forEach((key) => {
     if (updatedParty[key] === oldParty[key]) {
@@ -38,7 +39,7 @@ function diffParty(oldParty, updatedParty) {
   return diffs;
 }
 
-function diffParties(oldParties: any, updatedParties: any) {
+function diffParties(oldParties: Party[], updatedParties: Party[]) {
   const oldMap = {};
   oldParties.forEach((p) => {
     oldMap[p.id] = p;
@@ -64,7 +65,7 @@ export default class Session extends EventEmitter {
   private _eventSequence: Number;
   private _sdk: any;
 
-  constructor(rawData: any, sdk: any) {
+  constructor(rawData: SessionData, sdk: RingCentral) {
     super();
     const { sequence, ...data } = rawData;
     this._data = data;
@@ -81,14 +82,14 @@ export default class Session extends EventEmitter {
     });
   }
 
-  public onUpdated(data) {
+  public onUpdated(data: SessionData) {
     if (!this._eventSequence || data.sequence < this._eventSequence) {
       this._eventSequence = data.sequence;
     }
-    const partiesDiff =  diffParties(this._data.parties, data.parties);
+    const partiesDiff =  diffParties(this.parties, data.parties);
     partiesDiff.forEach((diff) => {
       if (diff.type === 'new') {
-        this._data.parties = [].concat(this._data.parties).concat(diff.party);
+        this._data.parties = [].concat(this.parties).concat(diff.party);
         this.emit('status', { party: diff.party });
         return;
       }
@@ -96,8 +97,8 @@ export default class Session extends EventEmitter {
         return;
       }
       if (diff.type === 'update') {
-        const oldPartyIndex = this._data.parties.findIndex(p => p.id === diff.party.id);
-        const parties = this._data.parties.slice(0);
+        const oldPartyIndex = this.parties.findIndex(p => p.id === diff.party.id);
+        const parties = this.parties.slice(0);
         parties[oldPartyIndex] = {
           ...parties[oldPartyIndex],
           ...diff.party,
@@ -112,13 +113,25 @@ export default class Session extends EventEmitter {
     });
   }
 
+  get data() {
+    return this._data || {};
+  }
+
+  get id() {
+    return this.data.id;
+  }
+
+  get parties() {
+    return this.data.parties || [];
+  }
+
   get party() {
-    const extensionId = this._data.extensionId;
-    return this._data.parties.find(p => p.extensionId === extensionId);
+    const extensionId = this.data.extensionId;
+    return this.parties.find(p => p.extensionId === extensionId);
   }
 
   toJSON() {
-    return this._data;
+    return this.data;
   }
 
   async drop() {
@@ -292,6 +305,7 @@ export interface SessionData {
   parties: Party[];
   creationTime?: string;
   voiceCallToken?: string;
+  sequence?: number;
 }
 
 export interface ForwardParams {

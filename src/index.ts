@@ -3,22 +3,80 @@ import RingCentral from 'ringcentral';
 import Session from './Session';
 import formatParty from './formatParty';
 
-interface SessionsMap {
+export interface SessionsMap {
   [key: string]: any;
+}
+
+export interface SessionMessage {
+  event: string;
+  body: any;
+}
+
+export interface Device {
+  id: string;
+  linePooling: string;
+  name: string;
+  uri: string;
+  type: 'SoftPhone' | 'OtherPhone' | 'HardPhone'
+  serial: string;
+  computerName: string;
+  boxBillingId: Number;
+  useAsCommonPhone: boolean;
+  inCompanyNet: boolean;
+  model: any;
+  extension: any;
+  emergencyServiceAddress: any;
+  phoneLines: any[];
+  shipping: any;
+  sku: any;
+  status: 'Initial' | 'Offline' | 'Online';
+  site: any;
+  lastLocationReportTime: string;
+}
+
+export interface Account {
+  id: string;
+}
+
+export interface Extension {
+  id: string;
+  uri: string;
+  account: Account;
+  contact: any;
+  departments: any[];
+  extensionNumber: string;
+  name: string;
+  partnerId: string;
+  permissions: any[];
+  profileImage: any;
+  references: any[];
+  roles: any[];
+  regionalSettings: any;
+  serviceFeatures: any[];
+  setupWizardState: string;
+  status: string;
+  statusInfo: string;
+  type: string;
+  callQueueExtensionInfo: any;
+  hidden: boolean;
+}
+
+export interface CallOutToParams {
+  phoneNumber?: string;
+  extensionNumber?: string;
 }
 
 export default class RingCentralCallControl extends EventEmitter {
   private _sdk: RingCentral;
   private _sessionsMap: SessionsMap;
-  private _devices: any[];
-  private _eventSequence: Number;
-  private _currentExtension: any;
+  private _devices: Device[];
+  private _currentExtension: Extension;
 
   constructor({ sdk } : { sdk: RingCentral }) {
     super();
     this._sdk = sdk;
     this._sessionsMap = new Map;
-    this._eventSequence = null;
+    this._devices = null;
     this.initialize();
   }
 
@@ -28,7 +86,7 @@ export default class RingCentralCallControl extends EventEmitter {
     await this.loadDevices();
   }
 
-  public onNotificationEvent(message: any) {
+  public onNotificationEvent(message: SessionMessage) {
     if (message.event.indexOf('/telephony/sessions') === -1) {
       return;
     }
@@ -113,10 +171,10 @@ export default class RingCentralCallControl extends EventEmitter {
     }
   }
 
-  private onSessionStatusUpdated(session) {
+  private onSessionStatusUpdated(session: Session) {
     const party = session.party;
     if (party && party.status.code === 'Disconnected') {
-      this._sessionsMap.delete(session.telephonySessionId);
+      this._sessionsMap.delete(session.id);
     }
   }
 
@@ -124,7 +182,7 @@ export default class RingCentralCallControl extends EventEmitter {
     await this.loadDevices();
   }
 
-  public async createCall(deviceId, to) {
+  public async createCall(deviceId: string, to: CallOutToParams) {
     const response = await this._sdk.platform().post('/account/~/telephony/call-out', {
       from: { deviceId },
       to,
@@ -144,5 +202,9 @@ export default class RingCentralCallControl extends EventEmitter {
 
   get extensionId() {
     return this._currentExtension && String(this._currentExtension.id);
+  }
+
+  get devices() {
+    return this._devices;
   }
 }

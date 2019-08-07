@@ -1,3 +1,4 @@
-# RingCentral Active Call Control API
+# RingCentral Active Call Control SDK
 
-RingCentral Active Call Control API
+RingCentral Active Call Control SDK
+
