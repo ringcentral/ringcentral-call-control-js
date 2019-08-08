@@ -129,6 +129,14 @@ export default class Session extends EventEmitter {
     return this.parties.find(p => p.extensionId === extensionId);
   }
 
+  get otherParties() {
+    if (!this.party) {
+      return this.parties;
+    }
+    const extensionId = this.data.extensionId;
+    return this.parties.filter(p => p.extensionId !== extensionId);
+  }
+
   toJSON() {
     return this.data;
   }
@@ -193,10 +201,12 @@ export default class Session extends EventEmitter {
   }
 
   async updateParty(params: PartyParams) {
-    const response = await this._sdk.platform().patch(
-      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}`,
-      params
-    );
+    const response = await this._sdk.platform().send({
+      method: 'PATCH',
+      url: `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}`,
+      query: null,
+      body: params
+    });
     return response.json();
   }
 
@@ -218,12 +228,14 @@ export default class Session extends EventEmitter {
   }
 
   async updateRecord(params: RecordParams) {
-    const response = await this._sdk.platform().post(
-      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings/${params.id}`,
-      {
+    const response = await this._sdk.platform().send({
+      method: 'PATCH',
+      url: `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings/${params.id}`,
+      query: null,
+      body: {
         active: params.active,
       }
-    );
+    });
     return response.json();
   }
 

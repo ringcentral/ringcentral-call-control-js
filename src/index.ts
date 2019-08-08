@@ -76,7 +76,7 @@ export default class RingCentralCallControl extends EventEmitter {
     super();
     this._sdk = sdk;
     this._sessionsMap = new Map;
-    this._devices = null;
+    this._devices = [];
     this.initialize();
   }
 
@@ -154,10 +154,14 @@ export default class RingCentralCallControl extends EventEmitter {
       data.extensionId = this.extensionId;
       data.accountId = this.accountId;
       data.parties = data.parties.map(p => formatParty(p));
+      const session = new Session(data, this._sdk);
       this._sessionsMap.set(
         activeCall.telephonySessionId,
-        new Session(data, this._sdk)
+        session,
       );
+      session.on('status', () => {
+        this.onSessionStatusUpdated(session);
+      });
     }));
   }
 
@@ -188,11 +192,17 @@ export default class RingCentralCallControl extends EventEmitter {
       to,
     });
     const sessionData = response.json().session;
+    sessionData.extensionId = this.extensionId;
+    sessionData.accountId = this.accountId;
+    sessionData.parties = sessionData.parties.map(p => formatParty(p));
     const session = new Session(sessionData, this._sdk);
     this._sessionsMap.set(
       sessionData.id,
       session,
     );
+    session.on('status', () => {
+      this.onSessionStatusUpdated(session);
+    });
     return session;
   }
 
