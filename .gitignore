@@ -1,4 +1,4 @@
-**/*.js
-**/*.js.map
+src/*.js
+src/*.js.map
 build
 node_modules
