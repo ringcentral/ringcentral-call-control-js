@@ -1,4 +1,4 @@
-# RingCentral Call Control JS SDK (WIP)
+# RingCentral Call Control JS SDK
 
 RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help developer call [RingCentral Call Control API](https://developers.ringcentral.com/api-reference/Call-Control/) more functionally.
 
@@ -24,8 +24,20 @@ RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help develop
 
 ## Install
 
+Use npm or yarn
+
 ```bash
 $ yarn add ringcentral ringcentral-call-control
+```
+
+CDN
+
+```html
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.js"></script>
+<script type="text/javascript" src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.20.1.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/0.11.1/fetch.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/ringcentral/ringcentral-js/3.2.2/build/ringcentral.js"></script>
+<script src="https://unpkg.com/ringcentral-call-control@0.0.1/build/index.js"></script>
 ```
 
 ## Usage
