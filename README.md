@@ -24,7 +24,9 @@ RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help develop
 
 ## Install
 
-npm install ringcentral ringcentral-call-control
+```bash
+$ yarn add ringcentral ringcentral-call-control
+```
 
 ## Usage
 
@@ -265,3 +267,11 @@ rcCallControl.refreshDevices().then(() => {
   var devices = rcCallControl.devices;
 });
 ```
+
+## TODO
+
+[ ] Account Level
+[ ] Conference Support
+[ ] Demo
+[x] Docs
+[ ] Tests
