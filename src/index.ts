@@ -91,7 +91,7 @@ export default class RingCentralCallControl extends EventEmitter {
     if (message.event.indexOf('/telephony/sessions') === -1) {
       return;
     }
-    const { eventTime, telephonySessionId, ...newData } = message.body;
+    const { eventTime, telephonySessionId, sessionId, ...newData } = message.body;
     if (!telephonySessionId) {
       return;
     }
@@ -101,15 +101,25 @@ export default class RingCentralCallControl extends EventEmitter {
     newData.accountId = this.accountId;
     newData.parties = newData.parties.map(p => formatParty(p));
     if (!existedSession) {
+      const disconnectedParties = newData.parties.filter(p => p.status.code === 'Disconnected');
+      if (disconnectedParties.length === newData.parties.length) {
+        return;
+      }
       const newSession = new Session(newData, this._sdk);
       newSession.on('status', () => {
         this.onSessionStatusUpdated(newSession);
       });
       this._sessionsMap.set(telephonySessionId, newSession);
-      this.emit('new', newSession);
+      if (newSession.party) {
+        this.emit('new', newSession);
+      }
       return;
     }
+    const party = existedSession.party;
     existedSession.onUpdated(newData);
+    if (!party && existedSession.party) {
+      this.emit('new', existedSession);
+    }
   }
 
   get sessions() {

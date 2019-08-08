@@ -164,14 +164,6 @@ session.mute().then(...);
 session.unmute().then(...);
 ```
 
-#### Reject
-
-Rejects an inbound call in a "Setup" or "Proceeding" state
-
-```js
-session.reject().then(...);
-```
-
 #### To Voicemail
 
 ```js
@@ -270,8 +262,8 @@ rcCallControl.refreshDevices().then(() => {
 
 ## TODO
 
+[x] Demo
+[x] Docs
 [ ] Account Level
 [ ] Conference Support
-[ ] Demo
-[x] Docs
 [ ] Tests

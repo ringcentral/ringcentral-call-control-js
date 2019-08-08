@@ -83,9 +83,6 @@ export default class Session extends EventEmitter {
   }
 
   public onUpdated(data: SessionData) {
-    if (!this._eventSequence || data.sequence < this._eventSequence) {
-      this._eventSequence = data.sequence;
-    }
     const partiesDiff =  diffParties(this.parties, data.parties);
     partiesDiff.forEach((diff) => {
       if (diff.type === 'new') {
@@ -110,6 +107,9 @@ export default class Session extends EventEmitter {
         return;
       }
     });
+    if (!this._eventSequence || data.sequence > this._eventSequence) {
+      this._eventSequence = data.sequence;
+    }
   }
 
   get data() {
@@ -165,7 +165,7 @@ export default class Session extends EventEmitter {
     return newParty;
   }
 
-  async reject() {
+  async toVoicemail() {
     await this._sdk.platform().post(
       `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/reject`
     );
@@ -187,10 +187,10 @@ export default class Session extends EventEmitter {
     return response.json();
   }
 
-  async toVoicemail() {
-    const result = await this.forward({ voicemail: this._data.extensionId });
-    return result;
-  }
+  // async transferToVoicemail() {
+  //   const result = await this.forward({ voicemail: this._data.extensionId });
+  //   return result;
+  // }
 
   async flip(params: FlipParams) {
     const response = await this._sdk.platform().post(

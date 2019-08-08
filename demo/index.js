@@ -49,6 +49,7 @@ $(function() {
       rcsdk.cache().setItem(cacheKey, subscription.subscription());
     });
     subscription.on(subscription.events.notification, function(msg) {
+      // console.log(msg);
       window.rcCallControl.onNotificationEvent(msg)
     });
     subscription.register();
@@ -81,13 +82,16 @@ $(function() {
       $('.modal').modal('hide');
     });
     rcCallControl.on('new', function(session) {
+      // console.log('new');
+      // console.log(JSON.stringify(session.data, null, 2));
       refreshCallList();
       session.on('status', function(event) {
-        console.log(event);
+        // console.log(event);
         refreshCallList();
       });
-      var status = session.party.status.code;
-      if (session.direction === 'Inbound' && status === 'Proceeding' || status === 'Setup') {
+      var party = session.party;
+      var status = party.status.code;
+      if (party.direction === 'Inbound' && (status === 'Proceeding' || status === 'Setup')) {
         showIncomingCallModal(session);
       }
     });
@@ -130,11 +134,12 @@ $(function() {
       if (!session) {
         return;
       }
-      var status = session.party.status.code;
-      if (status === 'Setup') {
+      var party = session.party;
+      var status = party.status.code;
+      if (status === 'VoiceMail' || status === 'Disconnected') {
         return;
       }
-      if (status === 'Proceeding') {
+      if ((status === 'Proceeding' || status === 'Setup') && party.direction === 'Inbound') {
         showIncomingCallModal(session);
         return;
       }
@@ -263,16 +268,32 @@ $(function() {
     var $modal = cloneTemplate($incomingCallTemplate).modal();
     var $from = $modal.find('input[name=from]').eq(0);
     var $to = $modal.find('input[name=to]').eq(0);
+    var $forwardForm = $modal.find('.forward-form').eq(0);
+    var $forward = $modal.find('input[name=forward]').eq(0);
     var party = session.party;
     $from.val(party.from.phoneNumber || party.from.extensionNumber);
     $to.val(party.to.phoneNumber || party.to.extensionNumber);
 
-    $modal.find('.reject').on('click', function() {
-      session.reject();
-    });
     $modal.find('.toVoicemail').on('click', function() {
       session.toVoicemail();
     });
+    $forwardForm.on('submit', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var phoneNumber = $forward.val();
+      var params = {};
+      if (phoneNumber.length > 5) {
+        params.phoneNumber = phoneNumber;
+      } else {
+        params.extensionNumber = phoneNumber;
+      }
+      session.forward(params).then(function () {
+        console.log('forwarded');
+      }).catch(function(e) {
+        console.error('forward failed', e.stack || e);
+      });
+    });
+    var hasAnswered = false;
     session.on('status', function() {
       if (
         session.party.status.code === 'Disconnected' ||
@@ -281,7 +302,8 @@ $(function() {
         $modal.modal('hide');
         return;
       }
-      if (session.party.status.code === 'Answered') {
+      if (!hasAnswered && session.party.status.code === 'Answered') {
+        hasAnswered = true;
         $modal.modal('hide');
         showCallControlModal(session);
       }
