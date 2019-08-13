@@ -7,7 +7,7 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     library: 'RingCentralCallControl',
     libraryTarget: 'umd',
-    libraryExport: 'default'
+    libraryExport: 'RingCentralCallControl'
   },
   externals: {
     externals: {

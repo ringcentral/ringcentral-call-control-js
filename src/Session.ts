@@ -60,7 +60,7 @@ function diffParties(oldParties: Party[], updatedParties: Party[]) {
   return diffs;
 }
 
-export default class Session extends EventEmitter {
+export class Session extends EventEmitter {
   private _data: any;
   private _eventSequence: Number;
   private _sdk: any;

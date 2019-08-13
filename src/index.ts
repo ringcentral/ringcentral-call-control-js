@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import RingCentral from 'ringcentral';
-import Session from './Session';
-import formatParty from './formatParty';
+import { Session } from './Session';
+import { formatParty } from './formatParty';
 
 export interface SessionsMap {
   [key: string]: any;
@@ -66,7 +66,7 @@ export interface CallOutToParams {
   extensionNumber?: string;
 }
 
-export default class RingCentralCallControl extends EventEmitter {
+export class RingCentralCallControl extends EventEmitter {
   private _sdk: RingCentral;
   private _sessionsMap: SessionsMap;
   private _devices: Device[];

@@ -1,4 +1,4 @@
-export default function formatParty({ owner, ...party }) {
+export function formatParty({ owner, ...party }) {
   if (!owner) {
     if (!party.extensionId && party.accountId) {
       delete party.accountId;
