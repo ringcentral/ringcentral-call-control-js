@@ -71,9 +71,11 @@ export class RingCentralCallControl extends EventEmitter {
   private _sessionsMap: SessionsMap;
   private _devices: Device[];
   private _currentExtension: Extension;
+  private _accountLevel: boolean;
 
-  constructor({ sdk } : { sdk: RingCentral }) {
+  constructor({ sdk, accountLevel } : { sdk: RingCentral, accountLevel: boolean }) {
     super();
+    this._accountLevel = !!accountLevel;
     this._sdk = sdk;
     this._sessionsMap = new Map;
     this._devices = [];
@@ -105,7 +107,7 @@ export class RingCentralCallControl extends EventEmitter {
       if (disconnectedParties.length === newData.parties.length) {
         return;
       }
-      const newSession = new Session(newData, this._sdk);
+      const newSession = new Session(newData, this._sdk, this._accountLevel);
       newSession.on('status', () => {
         this.onSessionStatusUpdated(newSession);
       });
@@ -145,12 +147,28 @@ export class RingCentralCallControl extends EventEmitter {
   }
 
   private async loadActiveCalls() {
+    let presenceUrl = '/account/~/extension/~/presence?detailedTelephonyState=true&sipData=true';
+    if (this._accountLevel) {
+      presenceUrl = '/account/~/presence?detailedTelephonyState=true&sipData=true';
+    }
     try {
-      const response = await this._sdk.platform().get('/account/~/extension/~/presence?detailedTelephonyState=true&sipData=true');
+      const response = await this._sdk.platform().get(presenceUrl);
       const data = response.json();
+      if (this._accountLevel) {
+        const presences = data.records;
+        let activeCalls = [];
+        presences.forEach((presence) => {
+          if (presence.activeCalls) {
+            activeCalls = activeCalls.concat(presence.activeCalls);
+          }
+        });
+        return activeCalls;
+      }
+
       return data.activeCalls || [];
     } catch (e) {
       console.error('Fetch presence error', e);
+      return [];
     }
   }
 
@@ -158,21 +176,25 @@ export class RingCentralCallControl extends EventEmitter {
     if (activeCalls.length === 0) {
       return;
     }
-    await Promise.all(activeCalls.map(async (activeCall) => {
-      const response = await this._sdk.platform().get(`/account/~/telephony/sessions/${activeCall.telephonySessionId}`);
-      const data = response.json();
-      data.extensionId = this.extensionId;
-      data.accountId = this.accountId;
-      data.parties = data.parties.map(p => formatParty(p));
-      const session = new Session(data, this._sdk);
-      this._sessionsMap.set(
-        activeCall.telephonySessionId,
-        session,
-      );
-      session.on('status', () => {
-        this.onSessionStatusUpdated(session);
-      });
-    }));
+    try {
+      await Promise.all(activeCalls.map(async (activeCall) => {
+        const response = await this._sdk.platform().get(`/account/~/telephony/sessions/${activeCall.telephonySessionId}`);
+        const data = response.json();
+        data.extensionId = this.extensionId;
+        data.accountId = this.accountId;
+        data.parties = data.parties.map(p => formatParty(p));
+        const session = new Session(data, this._sdk, this._accountLevel);
+        this._sessionsMap.set(
+          activeCall.telephonySessionId,
+          session,
+        );
+        session.on('status', () => {
+          this.onSessionStatusUpdated(session);
+        });
+      }));
+    } catch (e) {
+      console.error('load sessions error', e);
+    }
   }
 
   private async loadDevices() {
@@ -205,7 +227,7 @@ export class RingCentralCallControl extends EventEmitter {
     sessionData.extensionId = this.extensionId;
     sessionData.accountId = this.accountId;
     sessionData.parties = sessionData.parties.map(p => formatParty(p));
-    const session = new Session(sessionData, this._sdk);
+    const session = new Session(sessionData, this._sdk, this._accountLevel);
     this._sessionsMap.set(
       sessionData.id,
       session,

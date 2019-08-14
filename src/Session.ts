@@ -64,13 +64,15 @@ export class Session extends EventEmitter {
   private _data: any;
   private _eventSequence: Number;
   private _sdk: any;
+  private _accountLevel: boolean;
 
-  constructor(rawData: SessionData, sdk: RingCentral) {
+  constructor(rawData: SessionData, sdk: RingCentral, accountLevel: boolean) {
     super();
     const { sequence, ...data } = rawData;
     this._data = data;
     this._eventSequence = sequence;
     this._sdk = sdk;
+    this._accountLevel = !!accountLevel;
 
     return new Proxy(this, {
       get(target, name, receiver) {
@@ -126,15 +128,21 @@ export class Session extends EventEmitter {
 
   get party() {
     const extensionId = this.data.extensionId;
-    return this.parties.find(p => p.extensionId === extensionId);
+    const accountId = this.data.accountId;
+    return this.parties.find(p => {
+      if (this._accountLevel) {
+        return p.accountId === accountId;
+      }
+      return p.extensionId === extensionId;
+    });
   }
 
   get otherParties() {
     if (!this.party) {
       return this.parties;
     }
-    const extensionId = this.data.extensionId;
-    return this.parties.filter(p => p.extensionId !== extensionId);
+    const partyId = this.party.id;
+    return this.parties.filter(p => p.id !== partyId);
   }
 
   toJSON() {
