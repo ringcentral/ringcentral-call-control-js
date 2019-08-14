@@ -27,8 +27,6 @@ $(function() {
   }
 
   function initCallControl() {
-    rcCallControl = new RingCentralCallControl({ sdk: rcsdk });
-    window.rcCallControl = rcCallControl;
     subscription = rcsdk.createSubscription();
     var cachedSubscriptionData = rcsdk.cache().getItem('rc-call-control-subscription-key');
     if (cachedSubscriptionData) {
@@ -48,11 +46,13 @@ $(function() {
     subscription.on([subscription.events.subscribeSuccess, subscription.events.renewSuccess], function() {
       rcsdk.cache().setItem(cacheKey, subscription.subscription());
     });
+    rcCallControl = new RingCentralCallControl({ sdk: rcsdk, accountLevel: true });
+    window.rcCallControl = rcCallControl;
     subscription.on(subscription.events.notification, function(msg) {
       // console.log(msg);
       window.rcCallControl.onNotificationEvent(msg)
     });
-    subscription.register();
+    // subscription.register();
   }
 
   function showCallPage() {
@@ -81,6 +81,7 @@ $(function() {
       });
       $('.modal').modal('hide');
     });
+    subscription.register();
     rcCallControl.on('new', function(session) {
       // console.log('new');
       // console.log(JSON.stringify(session.data, null, 2));
