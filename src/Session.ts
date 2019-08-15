@@ -145,6 +145,10 @@ export class Session extends EventEmitter {
     return this.parties.filter(p => p.id !== partyId);
   }
 
+  get voiceCallToken() {
+    return this.data.voiceCallToken;
+  }
+
   toJSON() {
     return this.data;
   }
@@ -258,9 +262,24 @@ export class Session extends EventEmitter {
   }
 
   async supervise(params: SuperviseParams) {
-    const response = await this._sdk.platform().patch(
+    const response = await this._sdk.platform().post(
       `/account/~/telephony/sessions/${this._data.id}/supervise`,
       params
+    );
+    return response.json();
+  }
+
+  async bringInParty(params: BringInParams) {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/bring-in`,
+      params,
+    );
+    return response.json();
+  }
+
+  async removeParty(partyId: string) {
+    const response = await this._sdk.platform().delete(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${partyId}`
     );
     return response.json();
   }
@@ -355,4 +374,9 @@ export interface SuperviseParams {
   mode: 'Listen';
   deviceId: string;
   extensionNumber: string;
+}
+
+export interface BringInParams {
+  partyId: string;
+  sessionId: string;
 }

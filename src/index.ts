@@ -238,6 +238,27 @@ export class RingCentralCallControl extends EventEmitter {
     return session;
   }
 
+  // Fucntion to create conference session
+  // The session's parties are empty
+  // Join as HOST with voice by using webphone sdk to call session.voiceCallToken
+  // Then bring in other telephony session into this conference
+  public async createConference() {
+    const response = await this._sdk.platform().post('/account/~/telephony/conference', {});
+    const sessionData = response.json().session;
+    sessionData.extensionId = this.extensionId;
+    sessionData.accountId = this.accountId;
+    sessionData.parties = (sessionData.parties || []).map(p => formatParty(p));
+    const session = new Session(sessionData, this._sdk, this._accountLevel);
+    this._sessionsMap.set(
+      sessionData.id,
+      session,
+    );
+    session.on('status', () => {
+      this.onSessionStatusUpdated(session);
+    });
+    return session;
+  }
+
   get accountId() {
     return this._currentExtension && String(this._currentExtension.account.id);
   }
