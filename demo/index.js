@@ -46,7 +46,7 @@ $(function() {
     subscription.on([subscription.events.subscribeSuccess, subscription.events.renewSuccess], function() {
       rcsdk.cache().setItem(cacheKey, subscription.subscription());
     });
-    rcCallControl = new RingCentralCallControl({ sdk: rcsdk, accountLevel: true });
+    rcCallControl = new RingCentralCallControl({ sdk: rcsdk });
     window.rcCallControl = rcCallControl;
     subscription.on(subscription.events.notification, function(msg) {
       // console.log(msg);

@@ -274,9 +274,4 @@ rcCallControl.refreshDevices().then(() => {
 
 ## TODO
 
-- [x] Extension Level
-- [x] Demo
-- [x] Docs
-- [ ] Account Level
-- [ ] Conference Support
 - [ ] Tests
