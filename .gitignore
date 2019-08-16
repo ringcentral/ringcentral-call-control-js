@@ -1,4 +1,7 @@
 src/*.js
 src/*.js.map
+src/*.d.ts
 build
 node_modules
+lib
+.DS_Store

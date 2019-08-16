@@ -5,8 +5,10 @@
       "es6",
       "dom"
     ],
-    "sourceMap": true
+    "sourceMap": true,
+    "declaration": true,
+    "outDir": "lib"
   },
-  "files": ["src/index.ts"],
+  "files": ["src/index.ts", "src/Session.ts", "src/formatParty.ts"],
   "compileOnSave": true
 }

@@ -1,7 +1,7 @@
 {
   "name": "ringcentral-call-control",
-  "version": "0.0.2",
-  "main": "build/index.js",
+  "version": "0.0.3",
+  "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
     "prepublish": "tsc && webpack",
@@ -22,5 +22,13 @@
   },
   "peerDependencies": {
     "ringcentral": "^3.2.2"
-  }
+  },
+  "keywords": [
+    "ringcentral",
+    "callcontrol",
+    "telephony",
+    "javascript",
+    "library",
+    "typescript"
+  ]
 }
