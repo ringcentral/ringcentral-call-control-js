@@ -37,7 +37,7 @@ CDN
 <script type="text/javascript" src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.20.1.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/0.11.1/fetch.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/ringcentral/ringcentral-js/3.2.2/build/ringcentral.js"></script>
-<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.0.3/build/index.js"></script>
+<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.0.4/build/index.js"></script>
 ```
 
 ## Usage
