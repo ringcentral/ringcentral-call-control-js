@@ -58,8 +58,8 @@ var appName = '...';
 var appVersion = '...';
 
 var sdk = new RingCentral.SDK({
-  appKey: appKey,
-  appSecret: appSecret,
+  appKey: appClientId,
+  appSecret: appClientSecret,
   appName: appName,
   appVersion: appVersion,
   server: RingCentral.SDK.server.production // or .sandbox
