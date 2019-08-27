@@ -72,6 +72,7 @@ export class RingCentralCallControl extends EventEmitter {
   private _devices: Device[];
   private _currentExtension: Extension;
   private _accountLevel: boolean;
+  private _ready: boolean;
 
   constructor({ sdk, accountLevel } : { sdk: RingCentral, accountLevel: boolean }) {
     super();
@@ -79,6 +80,7 @@ export class RingCentralCallControl extends EventEmitter {
     this._sdk = sdk;
     this._sessionsMap = new Map;
     this._devices = [];
+    this._ready = false;
     this.initialize();
   }
 
@@ -86,6 +88,7 @@ export class RingCentralCallControl extends EventEmitter {
     await this.loadCurrentExtension();
     await this.loadSessions();
     await this.loadDevices();
+    this._ready = true;
     this.emit('initialized');
   }
 
@@ -269,5 +272,9 @@ export class RingCentralCallControl extends EventEmitter {
 
   get devices() {
     return this._devices;
+  }
+
+  get ready() {
+    return this._ready;
   }
 }
