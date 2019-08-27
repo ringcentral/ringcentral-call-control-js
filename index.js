@@ -52,7 +52,7 @@ $(function() {
       // console.log(msg);
       window.rcCallControl.onNotificationEvent(msg)
     });
-    // subscription.register();
+    subscription.register();
   }
 
   function showCallPage() {
@@ -63,7 +63,7 @@ $(function() {
     var $deviceAlert = $callPage.find('.device-alert').eq(0);
     var $callForm = $callPage.find('.call-out-form').eq(0);
     var $logout = $callPage.find('.logout').eq(0);
-    rcCallControl.on('initialized', function() {
+    function onInitializedEvent() {
       $deviceSelect.empty();
       var devices = rcCallControl.devices.filter(function(d) { return d.status === 'Online' });
       if (devices.length > 0) {
@@ -80,8 +80,12 @@ $(function() {
         });
       });
       $('.modal').modal('hide');
-    });
-    subscription.register();
+    }
+    if (rcCallControl.ready) {
+      onInitializedEvent();
+    } else {
+      rcCallControl.on('initialized', onInitializedEvent);
+    }
     rcCallControl.on('new', function(session) {
       // console.log('new');
       // console.log(JSON.stringify(session.data, null, 2));
