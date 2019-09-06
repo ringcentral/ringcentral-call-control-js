@@ -1,0 +1,88 @@
+{
+  "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004/device?page=1&perPage=100",
+  "records" : [ {
+    "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/device/52959004",
+    "id" : "52959004",
+    "type" : "SoftPhone",
+    "sku" : "DV-1",
+    "name" : "Embbnux Ji RingCentral for Desktop",
+    "status" : "Online",
+    "extension" : {
+      "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004",
+      "id" : 170848004,
+      "extensionNumber" : "101"
+    },
+    "phoneLines" : [ {
+      "lineType" : "Standalone",
+      "emergencyAddress" : {
+        "required" : true,
+        "localOnly" : false
+      },
+      "phoneInfo" : {
+        "id" : 244136004,
+        "phoneNumber" : "+16504257106",
+        "paymentType" : "Local",
+        "type" : "VoiceFax",
+        "usageType" : "DirectNumber",
+        "country" : {
+          "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1",
+          "id" : "1",
+          "name" : "United States"
+        }
+      }
+    } ],
+    "emergencyServiceAddress" : {
+      "street" : "20 DAVIS DR",
+      "city" : "BELMONT",
+      "state" : "CA",
+      "stateId" : "16",
+      "stateIsoCode" : "CA",
+      "stateName" : "California",
+      "country" : "US",
+      "countryId" : "1",
+      "countryIsoCode" : "US",
+      "countryName" : "United States",
+      "zip" : "94002",
+      "customerName" : "EMBB Male EMBBTEST",
+      "outOfCountry" : false
+    },
+    "shipping" : {
+      "address" : {
+        "street" : "App.664 1400 Fashion Island Blvd, 7th Floor",
+        "city" : "San Mateo",
+        "state" : "CA",
+        "stateId" : "16",
+        "stateIsoCode" : "CA",
+        "stateName" : "California",
+        "country" : "US",
+        "countryId" : "1",
+        "countryIsoCode" : "US",
+        "countryName" : "United States",
+        "zip" : "94404",
+        "customerName" : "Embbnux Ji"
+      },
+      "method" : {
+        "id" : "1",
+        "name" : "Ground"
+      },
+      "status" : "Accepted"
+    },
+    "linePooling" : "Host"
+  } ],
+  "paging" : {
+    "page" : 1,
+    "totalPages" : 1,
+    "perPage" : 100,
+    "totalElements" : 1,
+    "pageStart" : 0,
+    "pageEnd" : 0
+  },
+  "navigation" : {
+    "firstPage" : {
+      "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004/device?page=1&perPage=100"
+    },
+    "lastPage" : {
+      "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004/device?page=1&perPage=100"
+    }
+  }
+}

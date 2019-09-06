@@ -7,7 +7,8 @@
     ],
     "sourceMap": true,
     "declaration": true,
-    "outDir": "lib"
+    "outDir": "lib",
+    "resolveJsonModule": true
   },
   "files": ["src/index.ts", "src/Session.ts", "src/formatParty.ts"],
   "compileOnSave": true

@@ -1,0 +1,287 @@
+{
+  "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004",
+  "id" : 170848004,
+  "extensionNumber" : "101",
+  "contact" : {
+    "firstName" : "Embbnux",
+    "lastName" : "Ji",
+    "company" : "Embbnux",
+    "email" : "embbnux@embbnux.com",
+    "businessPhone" : "+14135073554",
+    "businessAddress" : {
+      "street" : "1400 Fashion Island Blvd, 7th Floor",
+      "city" : "San Mateo",
+      "zip" : "94404",
+      "country" : "United States"
+    },
+    "emailAsLoginName" : true,
+    "pronouncedName" : {
+      "type" : "TextToSpeech",
+      "text" : "Something New"
+    }
+  },
+  "name" : "Embbnux Ji",
+  "type" : "User",
+  "status" : "Enabled",
+  "departments" : [ {
+    "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/265287004",
+    "id" : "265287004",
+    "extensionNumber" : "1"
+  } ],
+  "serviceFeatures" : [ {
+    "featureName" : "SMS",
+    "enabled" : true
+  }, {
+    "featureName" : "SMSReceiving",
+    "enabled" : true
+  }, {
+    "featureName" : "Pager",
+    "enabled" : true
+  }, {
+    "featureName" : "PagerReceiving",
+    "enabled" : true
+  }, {
+    "featureName" : "Voicemail",
+    "enabled" : true
+  }, {
+    "featureName" : "Fax",
+    "enabled" : true
+  }, {
+    "featureName" : "FaxReceiving",
+    "enabled" : true
+  }, {
+    "featureName" : "DND",
+    "enabled" : true
+  }, {
+    "featureName" : "RingOut",
+    "enabled" : true
+  }, {
+    "featureName" : "InternationalCalling",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "Presence",
+    "enabled" : true
+  }, {
+    "featureName" : "VideoConferencing",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "SalesForce",
+    "enabled" : true
+  }, {
+    "featureName" : "Intercom",
+    "enabled" : true
+  }, {
+    "featureName" : "Paging",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "Conferencing",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "VoipCalling",
+    "enabled" : true
+  }, {
+    "featureName" : "FreeSoftPhoneLines",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "HipaaCompliance",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "CallPark",
+    "enabled" : true
+  }, {
+    "featureName" : "SharedLines",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "OnDemandCallRecording",
+    "enabled" : true
+  }, {
+    "featureName" : "Reports",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "CallForwarding",
+    "enabled" : true
+  }, {
+    "featureName" : "DeveloperPortal",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "EncryptionAtRest",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "BlockedMessageForwarding",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "EmergencyCalling",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "HDVoice",
+    "enabled" : true
+  }, {
+    "featureName" : "SingleExtensionUI",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "CallSupervision",
+    "enabled" : true
+  }, {
+    "featureName" : "VoicemailToText",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "WebPhone",
+    "enabled" : true
+  }, {
+    "featureName" : "RCTeams",
+    "enabled" : true
+  }, {
+    "featureName" : "UserManagement",
+    "enabled" : true
+  }, {
+    "featureName" : "Calendar",
+    "enabled" : true
+  }, {
+    "featureName" : "PasswordAuth",
+    "enabled" : true
+  }, {
+    "featureName" : "CallerIdControl",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "AutomaticInboundCallRecording",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "AutomaticOutboundCallRecording",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "AutomaticCallRecordingMute",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "SoftPhoneUpdate",
+    "enabled" : true
+  }, {
+    "featureName" : "LinkedSoftphoneLines",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "CallQualitySurvey",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "AccountFederation",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "MMS",
+    "enabled" : true
+  }, {
+    "featureName" : "CallParkLocations",
+    "enabled" : true
+  }, {
+    "featureName" : "ExternalDirectoryIntegration",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "CallSwitch",
+    "enabled" : true
+  }, {
+    "featureName" : "PromoMessage",
+    "enabled" : true
+  }, {
+    "featureName" : "SiteCodes",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "InternationalSMS",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "ConferencingNumber",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "VoipCallingOnMobile",
+    "enabled" : true
+  }, {
+    "featureName" : "DynamicConference",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "ConfigureDelegates",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  }, {
+    "featureName" : "Archiver",
+    "enabled" : true
+  }, {
+    "featureName" : "EmergencyAddressAutoUpdate",
+    "enabled" : false,
+    "reason" : "AccountTypeLimitation"
+  }, {
+    "featureName" : "MobileVoipEmergencyCalling",
+    "enabled" : false,
+    "reason" : "AccountLimitation"
+  } ],
+  "regionalSettings" : {
+    "timezone" : {
+      "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/timezone/58",
+      "id" : "58",
+      "name" : "US/Pacific",
+      "description" : "Pacific Time (US & Canada)",
+      "bias" : "-480"
+    },
+    "homeCountry" : {
+      "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/dictionary/country/1",
+      "id" : "1",
+      "name" : "United States",
+      "isoCode" : "US",
+      "callingCode" : "1"
+    },
+    "language" : {
+      "id" : "1033",
+      "name" : "English (United States)",
+      "localeCode" : "en-US"
+    },
+    "greetingLanguage" : {
+      "id" : "1033",
+      "name" : "English (United States)",
+      "localeCode" : "en-US"
+    },
+    "formattingLocale" : {
+      "id" : "1033",
+      "name" : "English (United States)",
+      "localeCode" : "en-US"
+    },
+    "timeFormat" : "12h"
+  },
+  "setupWizardState" : "Completed",
+  "permissions" : {
+    "admin" : {
+      "enabled" : true
+    },
+    "internationalCalling" : {
+      "enabled" : true
+    }
+  },
+  "profileImage" : {
+    "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004/profile-image"
+  },
+  "account" : {
+    "uri" : "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004",
+    "id" : "170848004"
+  },
+  "hidden" : false
+}

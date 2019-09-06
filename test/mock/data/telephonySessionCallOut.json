@@ -1,0 +1,33 @@
+{
+  "session" : {
+     "creationTime" : "2019-09-05T08:05:00Z",
+     "id" : "s-bb843f9bc3bd4366a83f9e953f2c9c58",
+     "origin" : {
+        "type" : "Call"
+     },
+     "parties" : [
+        {
+           "direction" : "Outbound",
+           "from" : {
+              "deviceId" : "4388743021",
+              "extensionId" : "170848004",
+              "name" : "Embbnux Ji",
+              "phoneNumber" : "+15188315358"
+           },
+           "id" : "p-bb843f9bc3bd4366a83f9e953f2c9c58-1",
+           "muted" : false,
+           "owner" : {
+              "accountId" : "170848004",
+              "extensionId" : "170848004"
+           },
+           "standAlone" : false,
+           "status" : {
+              "code" : "Setup"
+           },
+           "to" : {
+              "phoneNumber" : "+16579991394"
+           }
+        }
+     ]
+  }
+}

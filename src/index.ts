@@ -73,18 +73,31 @@ export class RingCentralCallControl extends EventEmitter {
   private _currentExtension: Extension;
   private _accountLevel: boolean;
   private _ready: boolean;
+  private _initializePromise: any;
 
-  constructor({ sdk, accountLevel } : { sdk: RingCentral, accountLevel: boolean }) {
+  constructor({ sdk, accountLevel } : { sdk: RingCentral, accountLevel?: boolean }) {
     super();
     this._accountLevel = !!accountLevel;
     this._sdk = sdk;
     this._sessionsMap = new Map;
     this._devices = [];
     this._ready = false;
+    this._initializePromise = null;
     this.initialize();
   }
 
   private async initialize() {
+    if (this._ready) {
+      return;
+    }
+    if (!this._initializePromise) {
+      this._initializePromise = this._initialize();
+    }
+    await this._initializePromise;
+    this._initializePromise = null;
+  }
+
+  private async _initialize() {
     await this.loadCurrentExtension();
     await this.loadSessions();
     await this.loadDevices();

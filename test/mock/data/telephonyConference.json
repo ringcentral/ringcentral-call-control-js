@@ -1,0 +1,11 @@
+{
+  "session" : {
+     "creationTime" : "2019-09-06T07:13:25Z",
+     "id" : "s-e61274ee8dc34d329fafcb176e0c1111",
+     "origin" : {
+        "type" : "Conference"
+     },
+     "parties" : [],
+     "voiceCallToken" : "conf_732d6536313237346565386463333464333239666166636231373665306331"
+  }
+}

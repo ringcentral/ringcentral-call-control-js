@@ -1,0 +1,40 @@
+{
+  "uuid": "2650487604990941854",
+  "event": "/restapi/v1.0/account/170848004/extension/170848004/telephony/sessions",
+  "timestamp": "2019-09-05T07:46:05.947Z",
+  "subscriptionId": "4a2eee85-880d-4690-9959-85d9fc70728b",
+  "ownerId": "170848004",
+  "body": {
+    "sequence": 8,
+    "sessionId": "21529129004",
+    "telephonySessionId": "s-bb843f9bc3bd4366a83f9e953f2c9c58",
+    "serverId": "10.28.20.109.TAM",
+    "eventTime": "2019-09-05T07:46:05.856Z",
+    "parties": [
+      {
+        "accountId": "170848004",
+        "extensionId": "170848004",
+        "id": "p-bb843f9bc3bd4366a83f9e953f2c9c58-1",
+        "direction": "Outbound",
+        "to": {
+          "phoneNumber": "+16579991394"
+        },
+        "from": {
+          "phoneNumber": "+16504257106",
+          "extensionId": "170848004",
+          "deviceId": "52294004"
+        },
+        "status": {
+          "code": "Disconnected",
+          "rcc": false
+        },
+        "missedCall": false,
+        "standAlone": false,
+        "muted": false
+      }
+    ],
+    "origin": {
+      "type": "Call"
+    }
+  }
+}

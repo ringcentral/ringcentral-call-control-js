@@ -1,0 +1,70 @@
+{
+  "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/presence?page=1&perPage=1000",
+  "records": [
+    {
+      "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004/presence",
+      "extension": {
+        "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170848004",
+        "id": 170848004,
+        "extensionNumber": "101"
+      },
+      "presenceStatus": "Available",
+      "telephonyStatus": "NoCall",
+      "userStatus": "Available",
+      "dndStatus": "TakeAllCalls",
+      "allowSeeMyPresence": true,
+      "ringOnMonitoredCall": false,
+      "pickUpCallsOnHold": false,
+      "activeCalls": [
+        {
+          "id": "rh48qh6apch71062dcvh",
+          "direction": "Outbound",
+          "from": "+16504257106",
+          "to": "+16579991394",
+          "telephonyStatus": "CallConnected",
+          "sipData": {
+            "toTag": "aoeuotdh4n",
+            "fromTag": "10.28.20.110-5070-d6360d5a11cc4a",
+            "remoteUri": "-",
+            "localUri": "-"
+          },
+          "sessionId": "21529090004",
+          "startTime": "2019-09-05T06:13:35.305+0000",
+          "partyId": "p-bb843f9bc3bd4366a83f9e953f2c9c58-1",
+          "telephonySessionId": "s-bb843f9bc3bd4366a83f9e953f2c9c58"
+        }
+      ]
+    },
+    {
+      "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170853004/presence",
+      "extension": {
+        "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/extension/170853004",
+        "id": 170853004,
+        "extensionNumber": "103"
+      },
+      "presenceStatus": "Available",
+      "telephonyStatus": "NoCall",
+      "userStatus": "Available",
+      "dndStatus": "TakeAllCalls",
+      "allowSeeMyPresence": true,
+      "ringOnMonitoredCall": false,
+      "pickUpCallsOnHold": false
+    }
+  ],
+  "paging": {
+    "page": 1,
+    "totalPages": 1,
+    "perPage": 1000,
+    "totalElements": 2,
+    "pageStart": 0,
+    "pageEnd": 1
+  },
+  "navigation": {
+    "firstPage": {
+      "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/presence?page=1&perPage=1000"
+    },
+    "lastPage": {
+      "uri": "https://platform.devtest.ringcentral.com/restapi/v1.0/account/170848004/presence?page=1&perPage=1000"
+    }
+  }
+}
