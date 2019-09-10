@@ -1,5 +1,8 @@
 # RingCentral Call Control JS SDK
 
+[![Coverage Status](https://coveralls.io/repos/github/embbnux/ringcentral-call-control-js/badge.svg?branch=master)](https://coveralls.io/github/embbnux/ringcentral-call-control-js?branch=master)
+[![NPM Version](https://img.shields.io/npm/v/ringcentral-call-control.svg?style=flat-square)](https://www.npmjs.com/package/ringcentral-call-control)
+
 RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help developer call [RingCentral Call Control API](https://developers.ringcentral.com/api-reference/Call-Control/) more functionally.
 
 ## Prerequisites
@@ -277,7 +280,3 @@ rcCallControl.refreshDevices().then(() => {
   var devices = rcCallControl.devices;
 });
 ```
-
-## TODO
-
-- [ ] Tests
