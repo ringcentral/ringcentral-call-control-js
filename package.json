@@ -57,6 +57,11 @@
     ],
     "collectCoverageFrom": [
       "src/**/*.ts"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
   }
 }

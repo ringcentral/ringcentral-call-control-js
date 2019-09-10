@@ -1,0 +1,47 @@
+{
+  "creationTime" : "2019-09-10T02:50:14Z",
+  "id" : "s-279e175539444bdc96d16c1e2fe4dbe9",
+  "origin" : {
+     "type" : "Call"
+  },
+  "parties" : [
+     {
+        "direction" : "Outbound",
+        "from" : {
+           "phoneNumber" : "+16579991394"
+        },
+        "id" : "p-279e175539444bdc96d16c1e2fe4dbe9-1",
+        "muted" : false,
+        "standAlone" : false,
+        "status" : {
+           "code" : "Answered"
+        },
+        "to" : {
+           "extensionId" : "170848004",
+           "name" : "Embbnux Ji",
+           "phoneNumber" : "+16504257106"
+        }
+     },
+     {
+        "direction" : "Inbound",
+        "from" : {
+           "phoneNumber" : "+16579991394"
+        },
+        "id" : "p-279e175539444bdc96d16c1e2fe4dbe9-2",
+        "muted" : false,
+        "owner" : {
+           "accountId" : "170848004",
+           "extensionId" : "170848004"
+        },
+        "standAlone" : false,
+        "status" : {
+           "code" : "Proceeding"
+        },
+        "to" : {
+           "extensionId" : "170848004",
+           "name" : "Embbnux Ji",
+           "phoneNumber" : "+16504257106"
+        }
+     }
+  ]
+}

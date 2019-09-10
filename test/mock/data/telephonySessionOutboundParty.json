@@ -1,0 +1,21 @@
+{
+  "direction" : "Outbound",
+  "from" : {
+     "deviceId" : "52932004",
+     "extensionId" : "170848004",
+     "phoneNumber" : "+16504257106"
+  },
+  "id" : "p-069f14d6736e4ab6835e61c57195e8de-1",
+  "muted" : true,
+  "owner" : {
+     "accountId" : "170848004",
+     "extensionId" : "170848004"
+  },
+  "standAlone" : false,
+  "status" : {
+     "code" : "Answered"
+  },
+  "to" : {
+     "phoneNumber" : "+16579991394"
+  }
+}

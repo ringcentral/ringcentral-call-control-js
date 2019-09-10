@@ -5,9 +5,13 @@ import * as extensionBody from './data/extensionInfo.json';
 import * as deviceBody from './data/device.json';
 import * as presenceBody from './data/presence.json';
 import * as accountPresenceBody from './data/accountPresence.json';
-import * as telephonySessionBody from './data/telephonySession.json';
+import * as telephonySessionBody from './data/telephonySessionOutbound.json';
 import * as telephonySessionCallOutBody from './data/telephonySessionCallOut.json';
 import * as telephonyConferenceBody from './data/telephonyConference.json';
+import * as telephonySessionPartyBody from './data/telephonySessionOutboundParty.json';
+import * as telephonySessionPartyForwardBody from './data/telephonySessionInboundPartyForward.json';
+import * as telephonySessionPartyTransferBody from './data/telephonySessionOutboundPartyTransfer.json';
+import * as telephonyConferenceBringInBody from './data/telephonyConferenceBringIn.json'
 
 export const mockServer = 'http://whatever';
 export function createSDK(options = {}) {
@@ -217,6 +221,136 @@ export function mockTelephoneConference(mockResponse = {}) {
     body: {
       ...telephonyConferenceBody,
       ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+
+export function mockTelephoneSessionUpdateParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId',
+    method: 'PATCH',
+    body: {
+      ...telephonySessionPartyBody,
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionHoldParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/hold',
+    method: 'POST',
+    body: {
+      ...telephonySessionPartyBody,
+      status: {
+        code: 'Hold'
+      },
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionUnholdParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/unhold',
+    method: 'POST',
+    body: {
+      ...telephonySessionPartyBody,
+      status: {
+        code: 'Answered'
+      },
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionDrop(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId',
+    method: 'DELETE',
+    body: {},
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionCreateRecording(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/recordings',
+    method: 'POST',
+    body: {
+      active: false,
+      id: '6962564004',
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionUpdateRecording(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/recordings/:recordId',
+    method: 'PATCH',
+    body: {
+      active: false,
+      id: '6962564004',
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionRejectParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/reject',
+    method: 'POST',
+    body: {},
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionForwardParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/forward',
+    method: 'POST',
+    body: {
+      ...telephonySessionPartyForwardBody
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionTransferParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/transfer',
+    method: 'POST',
+    body: {
+      ...telephonySessionPartyTransferBody
+    },
+    isOnce: true,
+  });
+}
+
+
+export function mockTelephoneSessionRemoveParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId',
+    method: 'DELETE',
+    body: {},
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionBringInParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/bring-in',
+    method: 'POST',
+    body: {
+      ...telephonyConferenceBringInBody,
     },
     isOnce: true,
   });

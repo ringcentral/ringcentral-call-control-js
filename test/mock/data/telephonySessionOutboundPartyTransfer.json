@@ -1,0 +1,22 @@
+{
+  "direction" : "Outbound",
+  "from" : {
+     "deviceId" : "52932004",
+     "extensionId" : "170848004",
+     "phoneNumber" : "+16504257106"
+  },
+  "id" : "p-fc4c93cdb34d4204ad95f349dd8f2174-1",
+  "muted" : false,
+  "owner" : {
+     "accountId" : "170848004",
+     "extensionId" : "170848004"
+  },
+  "standAlone" : false,
+  "status" : {
+     "code" : "Disconnected",
+     "reason" : "BlindTransfer"
+  },
+  "to" : {
+     "phoneNumber" : "+16579991394"
+  }
+}

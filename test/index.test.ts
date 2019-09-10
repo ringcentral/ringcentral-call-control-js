@@ -1,8 +1,8 @@
 import { RingCentralCallControl } from '../src/index';
 import * as mock from './mock/sdk';
-import * as extensionInfo from './mock/data/extensionInfo.json'
-import * as telephonySessionInboundProceedingMessage from './mock/data/telephonySessionInboundProceedingMessage.json'
-import * as telephonySessionOutboundSetupMessage from './mock/data/telephonySessionOutboundSetupMessage.json'
+import * as extensionInfo from './mock/data/extensionInfo.json';
+import * as telephonySessionInboundProceedingMessage from './mock/data/telephonySessionInboundProceedingMessage.json';
+import * as telephonySessionOutboundSetupMessage from './mock/data/telephonySessionOutboundSetupMessage.json';
 import * as telephonySessionOutboundDisconnectedMessage from './mock/data/telephonySessionOutboundDisconnectedMessage.json';
 
 let sdk;
@@ -126,6 +126,13 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(telephonySessionInboundProceedingMessage);
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].parties.length).toEqual(2);
+    });
+
+    it('should not update session when get telephony session no updated event', () => {
+      const oldStatus = rcCallControl.sessions[0].party.status;
+      rcCallControl.onNotificationEvent(telephonySessionInboundProceedingMessage);
+      expect(rcCallControl.sessions.length).toEqual(1);
+      expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
     });
 
     it('should delete session when get telephony session disconnected event', () => {
