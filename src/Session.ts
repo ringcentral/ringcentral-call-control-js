@@ -1,6 +1,8 @@
 import { EventEmitter } from "events";
 import RingCentral from 'ringcentral';
 
+import { formatParty } from './formatParty';
+
 function objectEqual(obj1: any, obj2: any) {
   let equal = true;
   if (!obj1 || !obj2) {
@@ -156,6 +158,15 @@ export class Session extends EventEmitter {
 
   toJSON() {
     return this.data;
+  }
+
+  async reload() {
+    const response = await this._sdk.platform().get(`/account/~/telephony/sessions/${this._data.id}`);
+    const data = response.json();
+    data.extensionId = this.data.extensionId;
+    data.accountId = this.data.accountId;
+    data.parties = data.parties.map(p => formatParty(p));
+    this._data = data;
   }
 
   async drop() {

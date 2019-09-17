@@ -40,6 +40,13 @@ describe('RingCentral Call Control :: Session', () => {
       expect(session.party.direction).toEqual('Outbound');
       expect(session.otherParties.length).toEqual(1);
     });
+
+    it('should reload successfully', async () => {
+      mock.mockTelephoneSession({ ...telephonySessionOutboundData });
+      await session.reload();
+      expect(session.party.id).toEqual(telephonySessionOutboundData.parties[0].id);
+      expect(session.party.direction).toEqual('Outbound');
+    });
   
     it('should mute successfully', async () => {
       mock.mockTelephoneSessionUpdateParty({ muted: true });
