@@ -145,6 +145,11 @@ export class Session extends EventEmitter {
     return this.parties.filter(p => p.id !== partyId);
   }
 
+  get recordings() {
+    const party = this.party;
+    return (party && party.recordings) || [];
+  }
+
   get voiceCallToken() {
     return this.data.voiceCallToken;
   }
@@ -236,7 +241,11 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings`,
     );
-    return response.json();
+    const recording = response.json();
+    const recordings = (this.party.recordings || []).filter(r => r.id !== recording.id);
+    recordings.push(recording);
+    this.party.recordings = recordings
+    return recording;
   }
 
   async updateRecord(params: RecordParams) {
@@ -248,7 +257,11 @@ export class Session extends EventEmitter {
         active: params.active,
       }
     });
-    return response.json();
+    const recording = response.json();
+    const recordings = (this.party.recordings || []).filter(r => r.id !== recording.id);
+    recordings.push(recording);
+    this.party.recordings = recordings
+    return recording;
   }
 
   async pauseRecord(recordingId: string) {

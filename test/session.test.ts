@@ -69,18 +69,24 @@ describe('RingCentral Call Control :: Session', () => {
       mock.mockTelephoneSessionCreateRecording();
       const recording = await session.createRecord();
       expect(recording.active).toEqual(false);
+      expect(session.recordings.length).toEqual(1);
+      expect(session.recordings[0].active).toEqual(false);
     });
   
     it('should resume recording successfully', async () => {
       mock.mockTelephoneSessionUpdateRecording({ active: true });
       const recording = await session.resumeRecord('6962564004');
       expect(recording.active).toEqual(true);
+      expect(session.recordings.length).toEqual(1);
+      expect(session.recordings[0].active).toEqual(true);
     });
   
     it('should pause recording successfully', async () => {
       mock.mockTelephoneSessionUpdateRecording({ active: false });
       const recording = await session.pauseRecord('6962564004');
       expect(recording.active).toEqual(false);
+      expect(session.recordings.length).toEqual(1);
+      expect(session.recordings[0].active).toEqual(false);
     });
   
     it('should drop successfully', async () => {
