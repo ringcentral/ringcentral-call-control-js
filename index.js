@@ -13,7 +13,6 @@ $(function() {
   var $incomingCallTemplate = $('#template-incoming');
   var $callPage = null;
   var $loadingModal = $('.loading-modal');
-  var recordingStore = {};
 
   function getRedirectUri() {
     if (window.location.pathname.indexOf('/index.html') > 0) {
@@ -49,7 +48,7 @@ $(function() {
     rcCallControl = new RingCentralCallControl({ sdk: rcsdk });
     window.rcCallControl = rcCallControl;
     subscription.on(subscription.events.notification, function(msg) {
-      // console.log(msg);
+      // console.log(JSON.stringify(msg, null, 2));
       window.rcCallControl.onNotificationEvent(msg)
     });
     subscription.register();
@@ -218,28 +217,28 @@ $(function() {
       });
     });
     $modal.find('.startRecord').on('click', function() {
-      if (!recordingStore[session.id]) {
-        session.createRecord().then(function(result) {
-          recordingStore[session.id] = result;
-        }).catch(function(e) {
+      if (session.recordings.length === 0) {
+        session.createRecord().catch(function(e) {
             console.error('create record failed', e.stack || e);
         });
         return;
       }
-      session.resumeRecord(recordingStore[session.id].id).then(function(result) {
-        recording = result
+      var recording = session.recordings[0];
+      session.resumeRecord(recording.id).then(function(result) {
+        console.log('recording resumed');
       }).catch(function(e) {
-          console.error('resume record failed', e.stack || e);
+        console.error('resume record failed', e.stack || e);
       });
     });
     $modal.find('.stopRecord').on('click', function() {
-      if (!recordingStore[session.id]) {
+      if (session.recordings.length === 0) {
         return;
       }
-      session.pauseRecord(recordingStore[session.id].id).then(function() {
+      var recording = session.recordings[0];
+      session.pauseRecord(recording.id).then(function() {
         console.log('recording stopped');
       }).catch(function(e) {
-          console.error('stop recording failed', e.stack || e);
+        console.error('stop recording failed', e.stack || e);
       });
     });
     $transferForm.on('submit', function (e) {
@@ -261,7 +260,6 @@ $(function() {
     session.on('status', function() {
       if (session.party.status.code === 'Disconnected') {
         $modal.modal('hide');
-        delete recordingStore[session.id];
         return;
       }
       $myStatus.val(session.party.status.code);
