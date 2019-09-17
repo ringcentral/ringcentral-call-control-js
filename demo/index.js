@@ -75,6 +75,7 @@ $(function() {
       });
     }
     function onInitializedEvent() {
+      refreshDevices();
       refreshCallList();
       rcCallControl.sessions.forEach(function(session) {
         session.on('status', function() {
