@@ -1,8 +1,13 @@
 {
   "name": "ringcentral-call-control",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/embbnux/ringcentral-call-control-js.git"
+  },
+  "homepage": "https://github.com/embbnux/ringcentral-call-control-js#readme",
   "scripts": {
     "prepublish": "tsc && webpack",
     "tsc": "tsc",
