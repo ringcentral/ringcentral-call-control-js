@@ -59,10 +59,11 @@ $(function() {
     $callPage = cloneTemplate($callTemplate);
     var $deviceSelect = $callPage.find('select[name=device]').eq(0);
     var $phoneNumber = $callPage.find('input[name=number]').eq(0);
+    var $deviceRefresh = $callPage.find('.device-refresh').eq(0);
     var $deviceAlert = $callPage.find('.device-alert').eq(0);
     var $callForm = $callPage.find('.call-out-form').eq(0);
     var $logout = $callPage.find('.logout').eq(0);
-    function onInitializedEvent() {
+    function refreshDevices() {
       $deviceSelect.empty();
       var devices = rcCallControl.devices.filter(function(d) { return d.status === 'Online' });
       if (devices.length > 0) {
@@ -72,6 +73,8 @@ $(function() {
       devices.forEach(function (device) {
         $deviceSelect.append('<option value="' + device.id + '">' + device.name + '</option>')
       });
+    }
+    function onInitializedEvent() {
       refreshCallList();
       rcCallControl.sessions.forEach(function(session) {
         session.on('status', function() {
@@ -116,6 +119,12 @@ $(function() {
         session.on('status', function() {
           refreshCallList();
         });
+      });
+    });
+    $deviceRefresh.on('click', function(e) {
+      e.preventDefault();
+      rcCallControl.refreshDevices().then(function () {
+        refreshDevices();
       });
     });
     $logout.on('click', function(e) {
