@@ -63,6 +63,26 @@ describe('RingCentral Call Control :: Index', () => {
     });
   });
 
+  describe('Initialize without preload', () => {
+    beforeAll(async () => {
+      rcCallControl = new RingCentralCallControl({
+        sdk,
+        preloadDevices: false,
+        preloadSessions: false,
+        extensionInfo,
+      });
+      await rcCallControl.initialize();
+    });
+
+    it('should be ready after initialized', () => {
+      expect(rcCallControl.ready).toEqual(true);
+      expect(rcCallControl.devices.length).toEqual(0);
+      expect(rcCallControl.sessions.length).toEqual(0);
+      expect(rcCallControl.extensionId).toEqual(String(extensionInfo.id));
+      expect(rcCallControl.accountId).toEqual(String(extensionInfo.account.id));
+    });
+  });
+
   describe('Initialize with API failed', () => {
     beforeAll(async () => {
       rcCallControl = new RingCentralCallControl({ sdk });

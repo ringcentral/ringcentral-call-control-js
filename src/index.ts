@@ -74,8 +74,22 @@ export class RingCentralCallControl extends EventEmitter {
   private _accountLevel: boolean;
   private _ready: boolean;
   private _initializePromise: any;
+  private _preloadSessions: boolean;
+  private _preloadDevices: boolean;
 
-  constructor({ sdk, accountLevel } : { sdk: RingCentral, accountLevel?: boolean }) {
+  constructor({
+    sdk,
+    accountLevel,
+    preloadSessions = true,
+    preloadDevices = true,
+    extensionInfo,
+  } : {
+    sdk: RingCentral,
+    accountLevel?: boolean,
+    preloadSessions?: boolean,
+    preloadDevices?: boolean,
+    extensionInfo?: Extension,
+  }) {
     super();
     this._accountLevel = !!accountLevel;
     this._sdk = sdk;
@@ -83,6 +97,9 @@ export class RingCentralCallControl extends EventEmitter {
     this._devices = [];
     this._ready = false;
     this._initializePromise = null;
+    this._preloadSessions = preloadSessions;
+    this._preloadDevices = preloadDevices;
+    this._currentExtension = extensionInfo;
     this.initialize();
   }
 
@@ -98,9 +115,15 @@ export class RingCentralCallControl extends EventEmitter {
   }
 
   private async _initialize() {
-    await this.loadCurrentExtension();
-    await this.loadSessions();
-    await this.loadDevices();
+    if (!this._currentExtension) {
+      await this.loadCurrentExtension();
+    }
+    if (this._preloadSessions) {
+      await this.preloadSessions();
+    }
+    if (this._preloadDevices) {
+      await this.loadDevices();
+    }
     this._ready = true;
     this.emit('initialized');
   }
@@ -157,9 +180,9 @@ export class RingCentralCallControl extends EventEmitter {
     }
   }
 
-  private async loadSessions() {
+  private async preloadSessions() {
     const activeCalls = await this.loadActiveCalls();
-    await this.loadTelephoneSessions(activeCalls);
+    await this.loadSessions(activeCalls);
   }
 
   private async loadActiveCalls() {
@@ -188,7 +211,7 @@ export class RingCentralCallControl extends EventEmitter {
     }
   }
 
-  private async loadTelephoneSessions(activeCalls) {
+  public async loadSessions(activeCalls) {
     if (activeCalls.length === 0) {
       return;
     }
