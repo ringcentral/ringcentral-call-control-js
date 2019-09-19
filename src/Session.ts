@@ -116,6 +116,10 @@ export class Session extends EventEmitter {
     }
   }
 
+  public restore(data: SessionData) {
+    this._data = data;
+  }
+
   get data() {
     return this._data || {};
   }

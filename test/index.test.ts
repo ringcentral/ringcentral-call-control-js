@@ -4,6 +4,7 @@ import * as extensionInfo from './mock/data/extensionInfo.json';
 import * as telephonySessionInboundProceedingMessage from './mock/data/telephonySessionInboundProceedingMessage.json';
 import * as telephonySessionOutboundSetupMessage from './mock/data/telephonySessionOutboundSetupMessage.json';
 import * as telephonySessionOutboundDisconnectedMessage from './mock/data/telephonySessionOutboundDisconnectedMessage.json';
+import * as telephonySessionOutboundData from './mock/data/telephonySessionOutbound.json';
 
 let sdk;
 let rcCallControl;
@@ -91,6 +92,49 @@ describe('RingCentral Call Control :: Index', () => {
 
     it('should be ready after initialized', () => {
       expect(rcCallControl.ready).toEqual(true);
+    });
+  });
+
+  describe('Restore sessions', () => {
+    it('should restore session as new session', async () => {
+      const callControl = new RingCentralCallControl({
+        sdk,
+        preloadDevices: false,
+        preloadSessions: false,
+        extensionInfo,
+      });
+      await callControl.initialize();
+      expect(callControl.sessions.length).toEqual(0);
+      callControl.restoreSessions([
+        {
+          ...telephonySessionOutboundData,
+          extensionId: String(extensionInfo.id),
+          accountId: String(extensionInfo.account.id),
+        }
+      ]);
+      expect(callControl.sessions.length).toEqual(1);
+    });
+
+    it('should restore session with existed session', async () => {
+      mock.mockPresence();
+      mock.mockTelephoneSession();
+      const callControl = new RingCentralCallControl({
+        sdk,
+        preloadDevices: false,
+        extensionInfo,
+      });
+      await callControl.initialize();
+      expect(callControl.sessions.length).toEqual(1);
+      const oldSession = callControl.sessions[0];
+      callControl.restoreSessions([
+        {
+          ...telephonySessionOutboundData,
+          extensionId: String(extensionInfo.id),
+          accountId: String(extensionInfo.account.id),
+        }
+      ]);
+      expect(callControl.sessions.length).toEqual(1);
+      expect(callControl.sessions[0]).toEqual(oldSession);
     });
   });
 

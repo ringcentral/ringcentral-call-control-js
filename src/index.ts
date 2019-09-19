@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import RingCentral from 'ringcentral';
-import { Session } from './Session';
+import { Session, SessionData } from './Session';
 import { formatParty } from './formatParty';
 
 export interface SessionsMap {
@@ -103,7 +103,7 @@ export class RingCentralCallControl extends EventEmitter {
     this.initialize();
   }
 
-  private async initialize() {
+  public async initialize() {
     if (this._ready) {
       return;
     }
@@ -234,6 +234,23 @@ export class RingCentralCallControl extends EventEmitter {
     } catch (e) {
       console.error('load sessions error', e);
     }
+  }
+
+  public restoreSessions(sessionDatas: SessionData[]) {
+    const oldSessionMap = this._sessionsMap;
+    this._sessionsMap = new Map();
+    sessionDatas.forEach((sessionData) => {
+      if (oldSessionMap.get(sessionData.id)) {
+        const oldSession = oldSessionMap.get(sessionData.id);
+        oldSession.restore(sessionData);
+        this._sessionsMap.set(sessionData.id, oldSession);
+        return;
+      }
+      this._sessionsMap.set(
+        sessionData.id,
+        new Session(sessionData, this._sdk, this._accountLevel)
+      );
+    });
   }
 
   private async loadDevices() {
