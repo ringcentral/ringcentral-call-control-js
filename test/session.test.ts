@@ -52,24 +52,28 @@ describe('RingCentral Call Control :: Session', () => {
       mock.mockTelephoneSessionUpdateParty({ muted: true });
       const party = await session.mute();
       expect(party.muted).toEqual(true);
+      expect(session.party.muted).toEqual(true);
     });
   
     it('should unmute successfully', async () => {
       mock.mockTelephoneSessionUpdateParty({ muted: false });
       const party = await session.unmute();
       expect(party.muted).toEqual(false);
+      expect(session.party.muted).toEqual(false);
     });
   
     it('should hold successfully', async () => {
       mock.mockTelephoneSessionHoldParty();
       const party = await session.hold();
       expect(party.status.code).toEqual('Hold');
+      expect(session.party.status.code).toEqual('Hold');
     });
   
     it('should unhold successfully', async () => {
       mock.mockTelephoneSessionUnholdParty();
       const party = await session.unhold();
       expect(party.status.code).toEqual('Answered');
+      expect(session.party.status.code).toEqual('Answered');
     });
   
     it('should create recording successfully', async () => {

@@ -179,12 +179,21 @@ export class Session extends EventEmitter {
     );
   }
 
+  private saveNewPartyData(rawParty) {
+    const newParty = formatParty(rawParty);
+    const newParties = this._data.parties.filter((p) => p.id !== newParty.id);
+    newParties.push(newParty);
+    this._data.parties = newParties;
+  }
+
   async hold() {
     const oldParty = this.party;
     const response = await this._sdk.platform().post(
       `/account/~/telephony/sessions/${this._data.id}/parties/${oldParty.id}/hold`
     );
     const newParty = response.json();
+    this.saveNewPartyData(newParty);
+    this.emit('status', { party: newParty });
     return newParty;
   }
 
@@ -194,6 +203,8 @@ export class Session extends EventEmitter {
       `/account/~/telephony/sessions/${this._data.id}/parties/${oldParty.id}/unhold`
     );
     const newParty = response.json();
+    this.saveNewPartyData(newParty);
+    this.emit('status', { party: newParty });
     return newParty;
   }
 
@@ -239,16 +250,20 @@ export class Session extends EventEmitter {
       query: null,
       body: params
     });
-    return response.json();
+    const rawParty = response.json();
+    this.saveNewPartyData(rawParty);
+    return rawParty;
   }
 
   async mute() {
     const result = await this.updateParty({ muted: true });
+    this.emit('muted', { party: result })
     return result;
   }
 
   async unmute() {
     const result = await this.updateParty({ muted: false });
+    this.emit('muted', { party: result })
     return result;
   }
 
