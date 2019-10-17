@@ -193,8 +193,8 @@ export class Session extends EventEmitter {
     );
     const newParty = response.json();
     this.saveNewPartyData(newParty);
-    this.emit('status', { party: newParty });
-    return newParty;
+    this.emit('status', { party: this.party });
+    return this.party;
   }
 
   async unhold() {
@@ -204,14 +204,39 @@ export class Session extends EventEmitter {
     );
     const newParty = response.json();
     this.saveNewPartyData(newParty);
-    this.emit('status', { party: newParty });
-    return newParty;
+    this.emit('status', { party: this.party });
+    return this.party;
   }
 
   async toVoicemail() {
     await this._sdk.platform().post(
       `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/reject`
     );
+  }
+
+  async ignore(params: IgnoreParams) {
+    await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/ignore`,
+      params
+    );
+  }
+
+  async answer(params: AnswerParams) {
+    await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/answer`,
+      params
+    );
+  }
+
+  async reply(params: ReplyWithTextParams) {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/reply`,
+      params,
+    );
+    const rawParty = response.json();
+    this.saveNewPartyData(rawParty);
+    this.emit('status', { party: this.party });
+    return this.party;
   }
 
   async forward(params: ForwardParams) {
@@ -229,6 +254,21 @@ export class Session extends EventEmitter {
     );
     return response.json();
   }
+
+  async park() {
+    const response = await this._sdk.platform().post(
+      `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/park`,
+    );
+    return response.json();
+  }
+
+  // async pickup(params: PickUpParams) {
+  //   const response = await this._sdk.platform().post(
+  //     `/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/pickup`,
+  //     params,
+  //   );
+  //   return response.json();
+  // }
 
   // async transferToVoicemail() {
   //   const result = await this.forward({ voicemail: this._data.extensionId });
@@ -422,4 +462,38 @@ export interface SuperviseParams {
 export interface BringInParams {
   partyId: string;
   sessionId: string;
+}
+
+export interface AnswerParams {
+  deviceId: string;
+}
+
+export interface IgnoreParams {
+  deviceId: string;
+}
+
+export enum ReplyWithPattern {
+  willCallYouBack = 'WillCallYouBack',
+  callMeBack = 'CallMeBack',
+  onMyWay = 'OnMyWay',
+  onTheOtherLine = 'OnTheOtherLine',
+  willCallYouBackLater = 'WillCallYouBackLater',
+  callMeBackLater = 'CallMeBackLater',
+  inAMeeting = 'InAMeeting',
+  onTheOtherLineNoCall = 'OnTheOtherLineNoCall'
+}
+
+export interface ReplyWithPatternParams {
+  pattern: ReplyWithPattern,
+  time?: number,
+  timeUnit?: 'Minute' | 'Hour' | 'Day',
+}
+
+export interface ReplyWithTextParams {
+  replyWithText?: string;
+  replyWithPattern?: ReplyWithPatternParams,
+}
+
+export interface PickUpParams {
+  deviceId: string;
 }

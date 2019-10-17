@@ -12,6 +12,7 @@ import * as telephonySessionPartyBody from './data/telephonySessionOutboundParty
 import * as telephonySessionPartyForwardBody from './data/telephonySessionInboundPartyForward.json';
 import * as telephonySessionPartyTransferBody from './data/telephonySessionOutboundPartyTransfer.json';
 import * as telephonyConferenceBringInBody from './data/telephonyConferenceBringIn.json'
+import * as telephonySessionInboundPartyBody from './data/telephonySessionInboundParty.json';
 
 export const mockServer = 'http://whatever';
 export function createSDK(options = {}) {
@@ -351,6 +352,64 @@ export function mockTelephoneSessionBringInParty(mockResponse = {}) {
     method: 'POST',
     body: {
       ...telephonyConferenceBringInBody,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionIgnoreParty() {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/ignore',
+    method: 'POST',
+    body: {},
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionReplyParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/reply',
+    method: 'POST',
+    body: {
+      ...telephonySessionInboundPartyBody,
+      status: {
+        code: 'Setup',
+        reason: 'CallReplied',
+      },
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionAnswerParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/answer',
+    method: 'POST',
+    body: {
+      ...telephonySessionInboundPartyBody,
+      status: {
+        code: 'Proceeding',
+      },
+      ...mockResponse,
+    },
+    isOnce: true,
+  });
+}
+
+export function mockTelephoneSessionParkParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/park',
+    method: 'POST',
+    body: {
+      ...telephonySessionInboundPartyBody,
+      park: {
+        id: '*801',
+      },
+      status: {
+        code: 'Parked',
+      },
+      ...mockResponse,
     },
     isOnce: true,
   });
