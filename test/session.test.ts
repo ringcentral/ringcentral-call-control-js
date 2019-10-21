@@ -115,7 +115,7 @@ describe('RingCentral Call Control :: Session', () => {
   })
 
   describe('Inbound', () => {
-    beforeAll(() => {
+    beforeEach(() => {
       const data = {
         ...telephonySessionInboundData,
         extensionId: String(extensionInfo.id),
@@ -129,7 +129,7 @@ describe('RingCentral Call Control :: Session', () => {
       expect(session.party.direction).toEqual('Inbound');
     });
 
-    it('should reject successfully', async () => {
+    it('should toVoicemail successfully', async () => {
       mock.mockTelephoneSessionRejectParty();
       await session.toVoicemail();
       const noException = true;
@@ -140,6 +140,32 @@ describe('RingCentral Call Control :: Session', () => {
       mock.mockTelephoneSessionForwardParty();
       const party = await session.forward({ phoneNumber: '+1234567890' });
       expect(party.status.reason).toEqual('BlindTransfer');
+    });
+
+    it('should ignore successfully', async () => {
+      mock.mockTelephoneSessionIgnoreParty();
+      await session.ignore();
+      const noException = true;
+      expect(noException).toEqual(true);
+    });
+
+    it('should reply successfully', async () => {
+      mock.mockTelephoneSessionReplyParty();
+      const party = await session.reply({ replyWithText: 'hi' });
+      expect(party.status.reason).toEqual('CallReplied');
+    });
+
+    it('should answer successfully', async () => {
+      mock.mockTelephoneSessionAnswerParty();
+      await session.answer({ deviceId: '111' });
+      const noException = true;
+      expect(noException).toEqual(true);
+    });
+
+    it('should park successfully', async () => {
+      mock.mockTelephoneSessionParkParty();
+      const party = await session.park();
+      expect(party.park.id).toEqual('*801');
     });
   });
 
