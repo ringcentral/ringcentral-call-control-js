@@ -191,6 +191,31 @@ session.unmute().then(...);
 session.toVoicemail().then(...);
 ```
 
+#### Ignore in call queue
+
+```js
+session.ignore({ deviceId: 'your_device_id' }).then(...);
+```
+
+#### Answer
+
+```js
+session.answer({ deviceId: 'your_device_id' }).then(...);
+```
+
+#### Reply with message
+
+```js
+session.reply({ replyWithText: 'On my way' }).then(...);
+session.reply({
+  replyWithPattern: {
+    pattern: 'WillCallYouBack',
+    time: 10,
+    timeUnit: 'Minute'
+  }
+}).then(...);
+```
+
 #### Forward
 
 Distributes a non-answered call to the defined target. Applicable for "Setup" or "Proceeding" states
@@ -213,6 +238,14 @@ Performs call flip procedure by holding opposite party and calling to the specif
 
 ```js
 session.flip({ callFlipId: 'callFlipId' }).then(...);
+```
+
+#### Park
+
+Performs call park procedure to set on park one of the call parties in call dialog.
+
+```js
+session.park().then(...);
 ```
 
 #### Recording
