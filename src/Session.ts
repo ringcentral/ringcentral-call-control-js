@@ -3,6 +3,136 @@ import RingCentral from 'ringcentral';
 
 import { formatParty } from './formatParty';
 
+export enum Direction {
+  inbound = 'Inbound',
+  outbound = 'Outbound',
+}
+
+export enum PartyStatusCode {
+  setup = 'Setup',
+  proceeding = 'Proceeding',
+  answered = 'Answered',
+  disconnected = 'Disconnected',
+  gone = 'Gone',
+  parked = 'Parked',
+  hold = 'Hold',
+  voicemail = 'VoiceMail',
+  faxReceive = 'FaxReceive',
+  voicemailScreening = 'VoiceMailScreening',
+}
+
+export interface PartyToFrom {
+  phoneNumber?: string;
+  name?: string;
+  extensionId?: string;
+  extensionNumber?: string;
+}
+
+export interface PartyStatus {
+  code?: PartyStatusCode;
+}
+
+export interface Recording {
+  id: string;
+  active: boolean;
+}
+
+export interface Party {
+  id: string;
+  extensionId?: string;
+  accountId?: string;
+  direction: Direction;
+  to: PartyToFrom;
+  from: PartyToFrom;
+  status: PartyStatus;
+  missedCall: boolean;
+  standAlone: boolean;
+  muted: boolean;
+  conferenceRole?: 'Host' | 'Participant';
+  ringOutRole?: 'Initiator' | 'Target';
+  ringMeRole?: 'Initiator' | 'Target';
+  recordings?: Recording[];
+}
+
+export interface SessionData {
+  id: string;
+  extensionId: string;
+  accountId: string;
+  parties: Party[];
+  creationTime?: string;
+  voiceCallToken?: string;
+  sequence?: number;
+}
+
+export interface ForwardParams {
+  phoneNumber?: string;
+  extensionNumber?: string;
+  voicemail?: string;
+}
+
+export interface TransferParams extends ForwardParams {
+  parkOrbit?: string;
+}
+
+export interface FlipParams {
+  callFlipId: string;
+}
+
+export interface PartyParams {
+  muted?: boolean;
+  standAlone?: boolean;
+}
+
+export interface RecordParams {
+  id: string;
+  active: boolean;
+}
+
+export interface SuperviseParams {
+  mode: 'Listen';
+  deviceId: string;
+  extensionNumber: string;
+}
+
+export interface BringInParams {
+  partyId: string;
+  sessionId: string;
+}
+
+export interface AnswerParams {
+  deviceId: string;
+}
+
+export interface IgnoreParams {
+  deviceId: string;
+}
+
+export enum ReplyWithPattern {
+  willCallYouBack = 'WillCallYouBack',
+  callMeBack = 'CallMeBack',
+  onMyWay = 'OnMyWay',
+  onTheOtherLine = 'OnTheOtherLine',
+  willCallYouBackLater = 'WillCallYouBackLater',
+  callMeBackLater = 'CallMeBackLater',
+  inAMeeting = 'InAMeeting',
+  onTheOtherLineNoCall = 'OnTheOtherLineNoCall'
+}
+
+export interface ReplyWithPatternParams {
+  pattern: ReplyWithPattern,
+  time?: number,
+  timeUnit?: 'Minute' | 'Hour' | 'Day',
+}
+
+export interface ReplyWithTextParams {
+  replyWithText?: string;
+  replyWithPattern?: ReplyWithPatternParams,
+}
+
+export interface PickUpParams {
+  deviceId: string;
+}
+
 function objectEqual(obj1: any, obj2: any) {
   let equal = true;
   if (!obj1 || !obj2) {
@@ -64,7 +194,7 @@ function diffParties(oldParties: Party[], updatedParties: Party[]) {
 
 export class Session extends EventEmitter {
   private _data: any;
-  private _eventSequence: Number;
+  private _eventPartySequences: any;
   private _sdk: any;
   private _accountLevel: boolean;
 
@@ -72,9 +202,15 @@ export class Session extends EventEmitter {
     super();
     const { sequence, ...data } = rawData;
     this._data = data;
-    this._eventSequence = sequence;
+    this._eventPartySequences = {};
     this._sdk = sdk;
     this._accountLevel = !!accountLevel;
+
+    this._updatePartiesSequence(this._data.parties, sequence);
+
+    this.on('status', ({ party }) => {
+      this._onPartyUpdated(party);
+    });
 
     return new Proxy(this, {
       get(target, name, receiver) {
@@ -86,6 +222,17 @@ export class Session extends EventEmitter {
     });
   }
 
+  _updatePartiesSequence(parties: Party[] = [], sequence?: Number) {
+    if (!sequence) {
+      return;
+    }
+    parties.forEach((party) => {
+      if (!this._eventPartySequences[party.id] || this._eventPartySequences[party.id] < sequence) {
+        this._eventPartySequences[party.id] = sequence;
+      }
+    });
+  }
+
   public onUpdated(data: SessionData) {
     const partiesDiff =  diffParties(this.parties, data.parties);
     partiesDiff.forEach((diff) => {
@@ -94,7 +241,8 @@ export class Session extends EventEmitter {
         this.emit('status', { party: diff.party });
         return;
       }
-      if (this._eventSequence && data.sequence < this._eventSequence) {
+      const lastSequence = this._eventPartySequences[diff.party.id]
+      if (lastSequence && data.sequence < lastSequence) {
         return;
       }
       if (diff.type === 'update') {
@@ -111,8 +259,15 @@ export class Session extends EventEmitter {
         return;
       }
     });
-    if (!this._eventSequence || data.sequence > this._eventSequence) {
-      this._eventSequence = data.sequence;
+    this._updatePartiesSequence(data.parties, data.sequence);
+  }
+
+  _onPartyUpdated(party) {
+    if (
+      party.status.code === PartyStatusCode.disconnected &&
+      party.status.reason === 'Pickup'
+    ) {
+      this._data.parties = this.parties.filter(p => p.id !== party.id);
     }
   }
 
@@ -135,12 +290,16 @@ export class Session extends EventEmitter {
   get party() {
     const extensionId = this.data.extensionId;
     const accountId = this.data.accountId;
-    return this.parties.find(p => {
+    const parties = this.parties.filter(p => {
       if (this._accountLevel) {
         return p.accountId === accountId;
       }
       return p.extensionId === extensionId;
     });
+    if (parties.length === 1) {
+      return parties[0];
+    }
+    return parties.find(p => p.status.code !== PartyStatusCode.disconnected)
   }
 
   get otherParties() {
@@ -366,134 +525,4 @@ export class Session extends EventEmitter {
     );
     return response.json();
   }
-}
-
-export enum Direction {
-  inbound = 'Inbound',
-  outbound = 'Outbound'
-}
-
-export enum PartyStatusCode {
-  setup = 'Setup', 
-  proceeding = 'Proceeding', 
-  answered = 'Answered', 
-  disconnected = 'Disconnected', 
-  gone = 'Gone', 
-  parked = 'Parked', 
-  hold = 'Hold', 
-  voicemail = 'VoiceMail', 
-  faxReceive = 'FaxReceive', 
-  voicemailScreening = 'VoiceMailScreening'
-}
-
-export interface PartyToFrom {
-  phoneNumber?: string;
-  name?: string;
-  extensionId?: string;
-  extensionNumber?: string;
-}
-
-export interface PartyStatus {
-  code?: PartyStatusCode;
-}
-
-export interface Recording {
-  id: string;
-  active: boolean;
-}
-
-export interface Party {
-  id: string;
-  extensionId?: string;
-  accountId?: string;
-  direction: Direction;
-  to: PartyToFrom;
-  from: PartyToFrom;
-  status: PartyStatus;
-  missedCall: boolean;
-  standAlone: boolean;
-  muted: boolean;
-  conferenceRole?: 'Host' | 'Participant';
-  ringOutRole?: 'Initiator' | 'Target';
-  ringMeRole?: 'Initiator' | 'Target';
-  recordings?: Recording[];
-}
-
-export interface SessionData {
-  id: string;
-  extensionId: string;
-  accountId: string;
-  parties: Party[];
-  creationTime?: string;
-  voiceCallToken?: string;
-  sequence?: number;
-}
-
-export interface ForwardParams {
-  phoneNumber?: string;
-  extensionNumber?: string;
-  voicemail?: string;
-}
-
-export interface TransferParams extends ForwardParams {
-  parkOrbit?: string;
-}
-
-export interface FlipParams {
-  callFlipId: string;
-}
-
-export interface PartyParams {
-  muted?: boolean;
-  standAlone?: boolean;
-}
-
-export interface RecordParams {
-  id: string;
-  active: boolean;
-}
-
-export interface SuperviseParams {
-  mode: 'Listen';
-  deviceId: string;
-  extensionNumber: string;
-}
-
-export interface BringInParams {
-  partyId: string;
-  sessionId: string;
-}
-
-export interface AnswerParams {
-  deviceId: string;
-}
-
-export interface IgnoreParams {
-  deviceId: string;
-}
-
-export enum ReplyWithPattern {
-  willCallYouBack = 'WillCallYouBack',
-  callMeBack = 'CallMeBack',
-  onMyWay = 'OnMyWay',
-  onTheOtherLine = 'OnTheOtherLine',
-  willCallYouBackLater = 'WillCallYouBackLater',
-  callMeBackLater = 'CallMeBackLater',
-  inAMeeting = 'InAMeeting',
-  onTheOtherLineNoCall = 'OnTheOtherLineNoCall'
-}
-
-export interface ReplyWithPatternParams {
-  pattern: ReplyWithPattern,
-  time?: number,
-  timeUnit?: 'Minute' | 'Hour' | 'Day',
-}
-
-export interface ReplyWithTextParams {
-  replyWithText?: string;
-  replyWithPattern?: ReplyWithPatternParams,
-}
-
-export interface PickUpParams {
-  deviceId: string;
 }

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import RingCentral from 'ringcentral';
-import { Session, SessionData } from './Session';
+import { Session, SessionData, PartyStatusCode, Party } from './Session';
 import { formatParty } from './formatParty';
 
 export interface SessionsMap {
@@ -265,7 +265,11 @@ export class RingCentralCallControl extends EventEmitter {
 
   private onSessionStatusUpdated(session: Session) {
     const party = session.party;
-    if (party && party.status.code === 'Disconnected') {
+    if (
+      party &&
+      party.status.code === PartyStatusCode.disconnected &&
+      party.status.reason !== 'Pickup'
+    ) {
       this._sessionsMap.delete(session.id);
     }
   }
