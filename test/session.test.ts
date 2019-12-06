@@ -213,4 +213,37 @@ describe('RingCentral Call Control :: Session', () => {
       expect(noException).toEqual(true);
     });
   });
+
+  describe('Party:', () => {
+    it('should have party undefined when parties empty', () => {
+      const data = {
+        ...telephonyConferenceData.session,
+        extensionId: String(extensionInfo.id),
+        accountId: String(extensionInfo.account.id),
+        parties: [],
+      };
+      session = new Session(data, sdk, false);
+      expect(session.party).toEqual(undefined);
+    });
+
+    it('should have party not disconnected when have multiple my parties', () => {
+      const data = {
+        ...telephonyConferenceData.session,
+        extensionId: String(extensionInfo.id),
+        accountId: String(extensionInfo.account.id),
+        parties: [
+          {
+            ...formatParty(telephonySessionOutboundData.parties.find(p => !!p.owner)),
+            id: '121212121',
+            status: {
+              code: 'Disconnected',
+            }
+          },
+          ...telephonySessionOutboundData.parties.map(p => formatParty(p))
+        ],
+      };
+      session = new Session(data, sdk, false);
+      expect(session.party.status.code).toEqual('Answered');
+    });
+  });
 });

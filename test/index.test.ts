@@ -192,11 +192,50 @@ describe('RingCentral Call Control :: Index', () => {
       expect(rcCallControl.sessions[0].parties.length).toEqual(2);
     });
 
+    it('should not update session when get telephony session with outdated sequence', () => {
+      const oldStatus = rcCallControl.sessions[0].party.status;
+      rcCallControl.onNotificationEvent({
+        ...telephonySessionInboundProceedingMessage,
+        body: {
+          ...telephonySessionInboundProceedingMessage.body,
+          sequence: telephonySessionInboundProceedingMessage.body.sequence - 1,
+          parties: [{
+            ...telephonySessionInboundProceedingMessage.body.parties[0],
+            status: {
+              code: 'Disconnected',
+            }
+          }]
+        }
+      });
+      expect(rcCallControl.sessions.length).toEqual(1);
+      expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
+    });
+
     it('should not update session when get telephony session no updated event', () => {
       const oldStatus = rcCallControl.sessions[0].party.status;
       rcCallControl.onNotificationEvent(telephonySessionInboundProceedingMessage);
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
+    });
+
+    it('should delete session when get telephony session disconnected event with pickup reason', () => {
+      rcCallControl.onNotificationEvent({
+        ...telephonySessionOutboundDisconnectedMessage,
+        body: {
+          ...telephonySessionOutboundDisconnectedMessage.body,
+          parties: [
+            {
+              ...telephonySessionOutboundDisconnectedMessage.body.parties[0],
+              status: {
+                ...telephonySessionOutboundDisconnectedMessage.body.parties[0].status,
+                reason: 'Pickup'
+              }
+            }
+          ]
+        }
+      });
+      expect(rcCallControl.sessions.length).toEqual(1);
+      expect(rcCallControl.sessions[0].party).toEqual(undefined);
     });
 
     it('should delete session when get telephony session disconnected event', () => {
