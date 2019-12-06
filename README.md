@@ -91,7 +91,7 @@ platform
 ## Demo
 
 ```bash
-$ git clone https://github.com/embbnux/ringcentral-call-control-js.git
+$ git clone https://github.com/ringcentral/ringcentral-call-control-js.git
 $ cd ringcentral-call-control-js
 $ yarn
 $ yarn build
