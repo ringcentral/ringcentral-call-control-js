@@ -1,6 +1,6 @@
 {
   "name": "ringcentral-call-control",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "main": "lib/index.js",
   "license": "MIT",
   "repository": {
@@ -20,21 +20,19 @@
     "test:showCoverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
+    "@ringcentral/sdk": "^4.1.0",
     "@types/jest": "^24.0.18",
+    "@types/node": "^14.0.1",
     "coveralls": "^3.0.6",
     "fetch-mock": "^7.3.9",
-    "http-server": "^0.11.1",
+    "http-server": "^0.12.3",
     "jest": "^24.9.0",
-    "ringcentral": "^3.2.2",
     "ts-jest": "^24.0.2",
     "ts-loader": "^5.3.3",
     "tslint": "^5.12.1",
     "typescript": "^3.2.4",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1"
-  },
-  "peerDependencies": {
-    "ringcentral": "^3.2.2"
   },
   "keywords": [
     "ringcentral",
