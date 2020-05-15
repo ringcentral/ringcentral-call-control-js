@@ -1,6 +1,7 @@
 $(function() {
   var rcsdk = null;
   var platform = null;
+  var subscriptions = null;
   var loggedIn = false;
   var subscription = null;
   var rcCallControl = null;
@@ -26,7 +27,7 @@ $(function() {
   }
 
   function initCallControl() {
-    subscription = rcsdk.createSubscription();
+    subscription = subscriptions.createSubscription();
     var cachedSubscriptionData = rcsdk.cache().getItem('rc-call-control-subscription-key');
     if (cachedSubscriptionData) {
       try {
@@ -334,11 +335,14 @@ $(function() {
   function show3LeggedLogin(server, appKey, appSecret) {
     rcsdk = new RingCentral.SDK({
       cachePrefix: 'rc-call-control',
-      appKey: appKey,
-      appSecret: appSecret,
+      clientId: appKey,
+      clientSecret: appSecret,
       server: server,
       redirectUri: redirectUri
     });
+    subscriptions = new RingCentral.Subscriptions({
+      sdk: rcsdk
+   });
 
     platform = rcsdk.platform(server, appKey, appSecret);
 

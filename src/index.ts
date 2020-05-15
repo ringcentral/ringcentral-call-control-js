@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import RingCentral from 'ringcentral';
-import { Session, SessionData, PartyStatusCode, Party } from './Session';
+import { SDK as RingCentralSDK } from '@ringcentral/sdk';
+import { Session, SessionData, PartyStatusCode } from './Session';
 import { formatParty } from './formatParty';
 
 export interface SessionsMap {
@@ -67,7 +67,7 @@ export interface CallOutToParams {
 }
 
 export class RingCentralCallControl extends EventEmitter {
-  private _sdk: RingCentral;
+  private _sdk: RingCentralSDK;
   private _sessionsMap: SessionsMap;
   private _devices: Device[];
   private _currentExtension: Extension;
@@ -84,7 +84,7 @@ export class RingCentralCallControl extends EventEmitter {
     preloadDevices = true,
     extensionInfo,
   } : {
-    sdk: RingCentral,
+    sdk: RingCentralSDK,
     accountLevel?: boolean,
     preloadSessions?: boolean,
     preloadDevices?: boolean,
@@ -173,8 +173,8 @@ export class RingCentralCallControl extends EventEmitter {
 
   private async loadCurrentExtension() {
     try {
-      const response = await this._sdk.platform().get('/account/~/extension/~');
-      this._currentExtension = response.json();
+      const response = await this._sdk.platform().get('/restapi/v1.0/account/~/extension/~');
+      this._currentExtension = await response.json();
     } catch (e) {
       console.error('Fetch presence error', e);
     }
@@ -186,13 +186,13 @@ export class RingCentralCallControl extends EventEmitter {
   }
 
   private async loadActiveCalls() {
-    let presenceUrl = '/account/~/extension/~/presence?detailedTelephonyState=true&sipData=true';
+    let presenceUrl = '/restapi/v1.0/account/~/extension/~/presence?detailedTelephonyState=true&sipData=true';
     if (this._accountLevel) {
-      presenceUrl = '/account/~/presence?detailedTelephonyState=true&sipData=true';
+      presenceUrl = '/restapi/v1.0/account/~/presence?detailedTelephonyState=true&sipData=true';
     }
     try {
       const response = await this._sdk.platform().get(presenceUrl);
-      const data = response.json();
+      const data = await response.json();
       if (this._accountLevel) {
         const presences = data.records;
         let activeCalls = [];
@@ -217,8 +217,8 @@ export class RingCentralCallControl extends EventEmitter {
     }
     try {
       await Promise.all(activeCalls.map(async (activeCall) => {
-        const response = await this._sdk.platform().get(`/account/~/telephony/sessions/${activeCall.telephonySessionId}`);
-        const data = response.json();
+        const response = await this._sdk.platform().get(`/restapi/v1.0/account/~/telephony/sessions/${activeCall.telephonySessionId}`);
+        const data = await response.json();
         data.extensionId = this.extensionId;
         data.accountId = this.accountId;
         data.parties = data.parties.map(p => formatParty(p));
@@ -255,8 +255,8 @@ export class RingCentralCallControl extends EventEmitter {
 
   private async loadDevices() {
     try {
-      const response = await this._sdk.platform().get('/account/~/extension/~/device');
-      const data = response.json();
+      const response = await this._sdk.platform().get('/restapi/v1.0/account/~/extension/~/device');
+      const data = await response.json();
       this._devices = data.records || [];
     } catch (e) {
       console.error('Fetch presence error', e);
@@ -279,11 +279,11 @@ export class RingCentralCallControl extends EventEmitter {
   }
 
   public async createCall(deviceId: string, to: CallOutToParams) {
-    const response = await this._sdk.platform().post('/account/~/telephony/call-out', {
+    const response = await this._sdk.platform().post('/restapi/v1.0/account/~/telephony/call-out', {
       from: { deviceId },
       to,
     });
-    const sessionData = response.json().session;
+    const sessionData = (await response.json()).session;
     sessionData.extensionId = this.extensionId;
     sessionData.accountId = this.accountId;
     sessionData.parties = sessionData.parties.map(p => formatParty(p));
@@ -303,8 +303,8 @@ export class RingCentralCallControl extends EventEmitter {
   // Join as HOST with voice by using webphone sdk to call session.voiceCallToken
   // Then bring in other telephony session into this conference
   public async createConference() {
-    const response = await this._sdk.platform().post('/account/~/telephony/conference', {});
-    const sessionData = response.json().session;
+    const response = await this._sdk.platform().post('/restapi/v1.0/account/~/telephony/conference', {});
+    const sessionData = (await response.json()).session;
     sessionData.extensionId = this.extensionId;
     sessionData.accountId = this.accountId;
     sessionData.parties = (sessionData.parties || []).map(p => formatParty(p));

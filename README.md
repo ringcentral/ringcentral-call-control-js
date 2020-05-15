@@ -45,9 +45,9 @@ CDN
 
 ## Usage
 
-For this example you will also need to have [RingCentral JS SDK](https://github.com/ringcentral/ringcentral-js#installation) installed.
+For this example you will also need to have [RingCentral JS SDK](https://github.com/ringcentral/ringcentral-js/tree/master/sdk#installation) and [RingCentral JS Subscriptions SDK](https://github.com/ringcentral/ringcentral-js/tree/master/subscriptions#installation) installed.
 
-Configure the web-phone
+Configure and new Call Control instance:
 
 ```js
 // npm import
@@ -61,13 +61,15 @@ var appName = '...';
 var appVersion = '...';
 
 var sdk = new RingCentral.SDK({
-  appKey: appClientId,
-  appSecret: appClientSecret,
+  clientId: appClientId,
+  clientSecret: appClientSecret,
   appName: appName,
   appVersion: appVersion,
   server: RingCentral.SDK.server.production // or .sandbox
 });
-
+var subscriptions = new RingCentral.Subscriptions({
+  sdk: rcsdk
+});
 var platform = sdk.platform();
 
 platform
@@ -77,7 +79,7 @@ platform
   })
   .then(function() {
     var rcCallControl = new RingCentralCallControl({ sdk: sdk });
-    var subscription = sdk.createSubscription();
+    var subscription = subscriptions.createSubscription();
 
     subscription.setEventFilters(['/restapi/v1.0/account/~/extension/~/telephony/sessions']);
     subscription.on(subscription.events.notification, function(msg) {
@@ -104,12 +106,12 @@ Open `http://localhost:8080/demo/`, and login with RingCentral Sandbox account t
 
 ### Init
 
-Firstly, we need to create Call Control instance after user login with [RingCentral JS SDK](https://github.com/ringcentral/ringcentral-js/tree/v3#login). Then connect `onNotificationEvent` with subscription notification event.
+Firstly, we need to create Call Control instance after user login with [RingCentral JS SDK](https://github.com/ringcentral/ringcentral-js/tree/v3#login). Then connect `onNotificationEvent` with [subscription](https://github.com/ringcentral/ringcentral-js/tree/master/subscriptions#ringcentral-subscriptions-sdk) notification event.
 
 ```js
 var rcCallControl = new RingCentralCallControl({ sdk: sdk });
 var initialized = false;
-var subscription = sdk.createSubscription();
+var subscription = subscriptions.createSubscription();
 subscription.setEventFilters(['/restapi/v1.0/account/~/extension/~/telephony/sessions']);
 subscription.on(subscription.events.notification, function(msg) {
   rcCallControl.onNotificationEvent(msg)

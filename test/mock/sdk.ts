@@ -1,5 +1,5 @@
 import * as fetchMock from 'fetch-mock';
-import * as RingCentral from 'ringcentral';
+import { SDK } from '@ringcentral/sdk';
 
 import * as extensionBody from './data/extensionInfo.json';
 import * as deviceBody from './data/device.json';
@@ -18,8 +18,8 @@ export const mockServer = 'http://whatever';
 export function createSDK(options = {}) {
   const opts = {
     ...options,
-    appKey: 'test key',
-    appSecret: 'test secret',
+    clientId: 'whatever',
+    clientSecret: 'whatever',
     server: mockServer,
     Request: fetchMock.config.Request,
     Response: fetchMock.config.Response,
@@ -29,7 +29,7 @@ export function createSDK(options = {}) {
     redirectUri: 'http://foo',
     cachePrefix: 'sdkPrefix',
   };
-  return new RingCentral(opts);
+  return new SDK(opts);
 }
 
 export function restore() {
