@@ -30,17 +30,18 @@ RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help develop
 Use npm or yarn
 
 ```bash
-$ yarn add ringcentral ringcentral-call-control
+$ yarn add @ringcentral/sdk @ringcentral/subscriptions ringcentral-call-control
 ```
 
 CDN
 
 ```html
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.js"></script>
-<script type="text/javascript" src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.20.1.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/0.11.1/fetch.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/ringcentral/ringcentral-js/3.2.2/build/ringcentral.js"></script>
-<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.0.4/build/index.js"></script>
+<script type="text/javascript" src="https://unpkg.com/es6-promise@latest/dist/es6-promise.auto.js"></script>
+<script type="text/javascript" src="https://unpkg.com/pubnub@latest/dist/web/pubnub.js"></script>
+<script type="text/javascript" src="https://unpkg.com/whatwg-fetch@latest/dist/fetch.umd.js"></script>
+<script type="text/javascript" src="https://unpkg.com/@ringcentral/sdk@latest/dist/ringcentral.js"></script>
+<script type="text/javascript" src="https://unpkg.com/@ringcentral/subscriptions@latest/dist/ringcentral-subscriptions.js"></script>
+<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.2.0/build/index.js"></script>
 ```
 
 ## Usage
