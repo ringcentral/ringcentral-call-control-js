@@ -1,6 +1,6 @@
 {
   "name": "ringcentral-call-control",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "lib/index.js",
   "license": "MIT",
   "repository": {
@@ -20,7 +20,7 @@
     "test:showCoverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
-    "@ringcentral/sdk": "^4.1.0",
+    "@ringcentral/sdk": "^4.2.0",
     "@types/jest": "^24.0.18",
     "@types/node": "^14.0.1",
     "coveralls": "^3.0.6",

@@ -1,4 +1,5 @@
 import { Session } from '../src/Session';
+import { USER_AGENT } from '../src/userAgent';
 import { formatParty } from '../src/formatParty';
 import * as extensionInfo from './mock/data/extensionInfo.json';
 import * as telephonySessionOutboundData from './mock/data/telephonySessionOutbound.json';
@@ -39,6 +40,10 @@ describe('RingCentral Call Control :: Session', () => {
       expect(session.party.id).toEqual(telephonySessionOutboundData.parties[0].id);
       expect(session.party.direction).toEqual('Outbound');
       expect(session.otherParties.length).toEqual(1);
+    });
+
+    it('should initialize with default userAgent', () => {
+      expect(session.requestOptions.userAgent).toEqual(USER_AGENT);
     });
 
     it('should reload successfully', async () => {
@@ -182,6 +187,22 @@ describe('RingCentral Call Control :: Session', () => {
 
     it('should initialize successfully', () => {
       expect(session.party.id).toEqual(telephonySessionOutboundData.parties[0].id);
+    });
+  });
+
+  describe('UserAgent', () => {
+    beforeAll(() => {
+      const data = {
+        ...telephonySessionOutboundData,
+        extensionId: String(extensionInfo.id),
+        accountId: String(extensionInfo.account.id),
+        parties: telephonySessionOutboundData.parties.map(p => formatParty(p))
+      };
+      session = new Session(data, sdk, false, 'TestAgent');
+    });
+
+    it('should initialize successfully', () => {
+      expect(session.requestOptions.userAgent).toEqual(`TestAgent ${USER_AGENT}`);
     });
   });
 

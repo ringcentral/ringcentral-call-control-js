@@ -286,10 +286,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@ringcentral/sdk@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@ringcentral/sdk/-/sdk-4.1.0.tgz#5318b93c2cf87436ee5b82084108365ffaba9307"
-  integrity sha512-dL+fp/a3cuB1w6vqdPAzTeUx/LmBHlBx7y7im1ACkCzBNZdF1laSExRaC1Wl0Ora3k/IzfH/fgwLYu1IqJEOQw==
+"@ringcentral/sdk@^4.2.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@ringcentral/sdk/-/sdk-4.3.0.tgz#c70da497f150f8b1cdac0e07dc4e0b08690cd7eb"
+  integrity sha512-ExpfAZY0y/lUzxHnb/ualA2o2eaRVnLy3ab86L9/b2mQZg5YBmllhpGGBuWbzekw7CD1SP8X4ceV/w7VDEBibw==
   dependencies:
     dom-storage "2.1.0"
     is-plain-object "2.0.4"
