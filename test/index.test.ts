@@ -1,4 +1,5 @@
 import { RingCentralCallControl } from '../src/index';
+import { USER_AGENT } from '../src/userAgent';
 import * as mock from './mock/sdk';
 import * as extensionInfo from './mock/data/extensionInfo.json';
 import * as telephonySessionInboundProceedingMessage from './mock/data/telephonySessionInboundProceedingMessage.json';
@@ -28,6 +29,10 @@ describe('RingCentral Call Control :: Index', () => {
   
     it('should be ready after initialized', () => {
       expect(rcCallControl.ready).toEqual(true);
+    });
+
+    it('should have default userAgent after initialized', () => {
+      expect(rcCallControl.requestOptions.userAgent).toEqual(USER_AGENT);
     });
 
     it('should not initialize duplicate', () => {
@@ -92,6 +97,17 @@ describe('RingCentral Call Control :: Index', () => {
 
     it('should be ready after initialized', () => {
       expect(rcCallControl.ready).toEqual(true);
+    });
+  });
+
+  describe('Initialize with User Agent', () => {
+    beforeAll(async () => {
+      rcCallControl = new RingCentralCallControl({ sdk, userAgent: 'TestAgent' });
+      await rcCallControl.initialize();
+    });
+
+    it('should be ready after initialized', () => {
+      expect(rcCallControl.requestOptions.userAgent).toEqual(`TestAgent ${USER_AGENT}`);
     });
   });
 
