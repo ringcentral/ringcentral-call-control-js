@@ -69,7 +69,7 @@ var sdk = new RingCentral.SDK({
   server: RingCentral.SDK.server.production // or .sandbox
 });
 var subscriptions = new RingCentral.Subscriptions({
-  sdk: rcsdk
+  sdk: sdk
 });
 var platform = sdk.platform();
 
