@@ -3,14 +3,25 @@
 [![Coverage Status](https://coveralls.io/repos/github/ringcentral/ringcentral-call-control-js/badge.svg?branch=master)](https://coveralls.io/github/ringcentral/ringcentral-call-control-js?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/ringcentral-call-control.svg?style=flat-square)](https://www.npmjs.com/package/ringcentral-call-control)
 
-RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help developer call [RingCentral Call Control API](https://developers.ringcentral.com/api-reference/Call-Control/) more functionally.
+RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help developers call [RingCentral Call Control API](https://developers.ringcentral.com/api-reference/Call-Control/) more functionally.
+
+## Features:
+
+We added the following key features to do the heavy lifting for you.
+
+* Call session management to load existing call sessions or create call session.
+* Call session event. Handle telephony session notifications, manage call session lifecycle
+* Call session management with functional API.
+* Devices management to load user’s devices.
+
+**Notice**: This library doesn't provide ability of voice transmission. For working with `WebRTC` voice transimission, please use [RingCentral Call JS SDK](https://github.com/ringcentral/ringcentral-call-js). It combines WebRTC voice transimission and Call Control RESTful APIs.
 
 ## Prerequisites
 
 * You will need an active RingCentral account to create RingCentral app. Don't have an account? [Get your Free RingCentral Developer Account Now!](https://developers.ringcentral.com/)
 * A RingCentral app
     * App type: Browser-Based or Server/Web
-    * Permissions: 'Active Call Control', 'Read Accounts', 'Read Presence', 'Webhook Subscriptions'
+    * Permissions: 'Call Control', 'Read Accounts', 'Read Presence', 'Webhook Subscriptions'
 
 ## Table of Contents
 
