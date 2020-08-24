@@ -161,7 +161,7 @@ function diffParty(oldParty: Party, updatedParty: Party) {
       return;
     }
     if (typeof updatedParty[key] !== 'object') {
-      diffs.push({ type: key, value: updatedParty[key] });
+      diffs.push({ key, value: updatedParty[key] });
       return;
     }
     if (objectEqual(updatedParty[key], oldParty[key])) {
@@ -511,6 +511,7 @@ export class Session extends EventEmitter {
     const recordings = (this.party.recordings || []).filter(r => r.id !== recording.id);
     recordings.push(recording);
     this.party.recordings = recordings
+    this.emit('recordings', { party: this.party });
     return recording;
   }
 
@@ -528,6 +529,7 @@ export class Session extends EventEmitter {
     const recordings = (this.party.recordings || []).filter(r => r.id !== recording.id);
     recordings.push(recording);
     this.party.recordings = recordings
+    this.emit('recordings', { party: this.party });
     return recording;
   }
 
