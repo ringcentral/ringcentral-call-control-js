@@ -50,6 +50,12 @@
           </div>
       </div>
   </div>
+  <div class="alert alert-warning alert-dismissible fixed-top fade show" role="alert" id="alert-item">
+    <span id="alert-message"></span>
+    <button type="button" class="close" aria-label="Close" id="alert-close">
+      <span>&times;</span>
+    </button>
+  </div>
 </div>
 <script type="text/html" id="template-auth-flow">
   <form class="panel panel-default" name="authorize-code">
@@ -61,14 +67,10 @@
           </div>
           <div class="form-group">
               <label>App Client ID:</label>
-              <input type="text" class="form-control" name="appKey" required>
+              <input type="text" class="form-control" name="clientId" required>
           </div>
           <div class="form-group">
-              <label>App Client Secret:</label>
-              <input type="text" class="form-control" name="appSecret">
-          </div>
-          <div class="form-group">
-              <label>Redirect Uri(Add following uri into RingCentral app redirect uri settings):</label>
+              <label>Redirect URI(Add following uri into your own RingCentral app redirect uri settings):</label>
               <input type="text" class="form-control" name="redirectUri" disabled>
           </div>
       </div>
@@ -155,6 +157,9 @@
                   <span class="btn-group">
                     <button class="btn btn-outline-primary startRecord">Start Recording</button>
                     <button class="btn btn-outline-primary stopRecord">Stop Recording</button>
+                  </span>
+                  <span class="btn-group">
+                    <button class="btn btn-outline-primary park">Park</button>
                   </span>
                 </div>
                 <hr/>
