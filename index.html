@@ -50,6 +50,12 @@
           </div>
       </div>
   </div>
+  <div class="alert alert-warning alert-dismissible fixed-top fade show" role="alert" id="alert-item">
+    <span id="alert-message"></span>
+    <button type="button" class="close" aria-label="Close" id="alert-close">
+      <span>&times;</span>
+    </button>
+  </div>
 </div>
 <script type="text/html" id="template-auth-flow">
   <form class="panel panel-default" name="authorize-code">
@@ -61,14 +67,10 @@
           </div>
           <div class="form-group">
               <label>App Client ID:</label>
-              <input type="text" class="form-control" name="appKey" required>
+              <input type="text" class="form-control" name="clientId" required>
           </div>
           <div class="form-group">
-              <label>App Client Secret:</label>
-              <input type="text" class="form-control" name="appSecret">
-          </div>
-          <div class="form-group">
-              <label>Redirect Uri(Add following uri into RingCentral app redirect uri settings):</label>
+              <label>Redirect URI(Add following uri into your own RingCentral app redirect uri settings):</label>
               <input type="text" class="form-control" name="redirectUri" disabled>
           </div>
       </div>
@@ -155,6 +157,9 @@
                   <span class="btn-group">
                     <button class="btn btn-outline-primary startRecord">Start Recording</button>
                     <button class="btn btn-outline-primary stopRecord">Stop Recording</button>
+                  </span>
+                  <span class="btn-group">
+                    <button class="btn btn-outline-primary park">Park</button>
                   </span>
                 </div>
                 <hr/>
@@ -261,11 +266,12 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.js"></script>
-<script type="text/javascript" src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.20.1.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/0.11.1/fetch.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/ringcentral/ringcentral-js/3.2.2/build/ringcentral.js"></script>
-<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.1.1/build/index.js"></script>
+<script type="text/javascript" src="https://unpkg.com/es6-promise@latest/dist/es6-promise.auto.js"></script>
+<script type="text/javascript" src="https://unpkg.com/pubnub@latest/dist/web/pubnub.js"></script>
+<script type="text/javascript" src="https://unpkg.com/whatwg-fetch@latest/dist/fetch.umd.js"></script>
+<script type="text/javascript" src="https://unpkg.com/@ringcentral/sdk@latest/dist/ringcentral.js"></script>
+<script type="text/javascript" src="https://unpkg.com/@ringcentral/subscriptions@latest/dist/ringcentral-subscriptions.js"></script>
+<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.2.2/build/index.js"></script>
 <script src="./index.js"></script>
 </body>
 </html>

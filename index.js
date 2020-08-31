@@ -1,10 +1,12 @@
 $(function() {
   var rcsdk = null;
   var platform = null;
+  var subscriptions = null;
   var loggedIn = false;
   var subscription = null;
   var rcCallControl = null;
   var redirectUri = getRedirectUri();
+  const defaultClientId = '66TmFtzLTKaIQzLT-d71_w';
 
   var $app = $('#app');
   var $authFlowTemplate = $('#template-auth-flow');
@@ -26,13 +28,13 @@ $(function() {
   }
 
   function initCallControl() {
-    subscription = rcsdk.createSubscription();
+    subscription = subscriptions.createSubscription();
     var cachedSubscriptionData = rcsdk.cache().getItem('rc-call-control-subscription-key');
     if (cachedSubscriptionData) {
       try {
         subscription.setSubscription(cachedSubscriptionData); // use the cache
       } catch (e) {
-        console.error('Cannot set subscription from cache data', e);
+        console.warn('Cannot set subscription from cache data', e);
         subscription.setEventFilters([
           '/restapi/v1.0/account/~/extension/~/telephony/sessions',
         ]);
@@ -251,6 +253,16 @@ $(function() {
         console.error('stop recording failed', e.stack || e);
       });
     });
+    $modal.find('.park').on('click', function() {
+      session.park().then(function(data) {
+        console.log('Parked');
+        $('#alert-message').html('Your call is parked at location: ' + data.park.id);
+        $('#alert-item').show();
+        $modal.modal('hide');
+      }).catch(function(e) {
+          console.error('Park failed', e.stack || e);
+      });
+    });
     $transferForm.on('submit', function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -323,30 +335,31 @@ $(function() {
     })
   }
 
-  function onLoginSuccess(server, appKey, appSecret) {
+  function onLoginSuccess(server, clientId) {
     localStorage.setItem('rcCallControlServer', server || '');
-    localStorage.setItem('rcCallControlAppKey', appKey || '');
-    localStorage.setItem('rcCallControlAppSecret', appSecret || '');
+    localStorage.setItem('rcCallControlClientId', clientId || '');
     initCallControl();
     showCallPage();
   }
 
-  function show3LeggedLogin(server, appKey, appSecret) {
+  function show3LeggedLogin(server, clientId) {
     rcsdk = new RingCentral.SDK({
-      cachePrefix: 'rc-call-control',
-      appKey: appKey,
-      appSecret: appSecret,
+      cachePrefix: 'rc-call-control-demo',
+      clientId: clientId,
       server: server,
       redirectUri: redirectUri
     });
+    subscriptions = new RingCentral.Subscriptions({
+      sdk: rcsdk
+   });
 
-    platform = rcsdk.platform(server, appKey, appSecret);
+    platform = rcsdk.platform();
 
-    var loginUrl = platform.loginUrl({ implicit: !appSecret });
+    var loginUrl = platform.loginUrl({ usePKCE: true });
     platform.loggedIn().then(function(isLogin) {
       loggedIn = isLogin;
       if (loggedIn) {
-        onLoginSuccess(server, appKey, appSecret);
+        onLoginSuccess(server, clientId);
         return;
       }
       platform.loginWindow({ url: loginUrl })
@@ -354,7 +367,7 @@ $(function() {
           return platform.login(loginOptions);
         })
         .then(function() {
-          onLoginSuccess(server, appKey, appSecret);
+          onLoginSuccess(server, clientId);
         })
         .catch(function(e) {
           console.error(e.stack || e);
@@ -365,18 +378,19 @@ $(function() {
   function init() {
     var $authForm = cloneTemplate($authFlowTemplate);
     var $server = $authForm.find('input[name=server]').eq(0);
-    var $appKey = $authForm.find('input[name=appKey]').eq(0);
-    var $appSecret = $authForm.find('input[name=appSecret]').eq(0);
+    var $clientId = $authForm.find('input[name=clientId]').eq(0);
     var $redirectUri = $authForm.find('input[name=redirectUri]').eq(0);
     $server.val(localStorage.getItem('rcCallControlServer') || RingCentral.SDK.server.sandbox);
-    $appKey.val(localStorage.getItem('rcCallControlAppKey') || '');
-    $appSecret.val(localStorage.getItem('rcCallControlAppSecret') || '');
+    $clientId.val(localStorage.getItem('rcCallControlClientId') || defaultClientId);
     $redirectUri.val(redirectUri);
-
+    $('#alert-item').hide();
+    $('#alert-close').on('click', function() {
+      $('#alert-item').hide();
+    });
     $authForm.on('submit', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      show3LeggedLogin($server.val(), $appKey.val(), $appSecret.val());
+      show3LeggedLogin($server.val(), $clientId.val());
     });
 
     $app.empty().append($authForm);
