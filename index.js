@@ -6,7 +6,7 @@ $(function() {
   var subscription = null;
   var rcCallControl = null;
   var redirectUri = getRedirectUri();
-  const defaultClientId = '66TmFtzLTKaIQzLT-d71_w';
+  var defaultClientId = '66TmFtzLTKaIQzLT-d71_w';
 
   var $app = $('#app');
   var $authFlowTemplate = $('#template-auth-flow');
