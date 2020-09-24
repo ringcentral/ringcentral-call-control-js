@@ -60,6 +60,7 @@ export interface SessionData {
   extensionId: string;
   accountId: string;
   parties: Party[];
+  sessionId: string;
   creationTime?: string;
   voiceCallToken?: string;
   sequence?: number;

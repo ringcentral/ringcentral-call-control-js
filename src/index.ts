@@ -137,7 +137,7 @@ export class RingCentralCallControl extends EventEmitter {
     if (message.event.indexOf('/telephony/sessions') === -1) {
       return;
     }
-    const { eventTime, telephonySessionId, sessionId, ...newData } = message.body;
+    const { eventTime, telephonySessionId, ...newData } = message.body;
     if (!telephonySessionId) {
       return;
     }
