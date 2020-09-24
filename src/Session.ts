@@ -64,6 +64,7 @@ export interface SessionData {
   creationTime?: string;
   voiceCallToken?: string;
   sequence?: number;
+  eventTime?: string;
 }
 
 export interface ForwardParams {
