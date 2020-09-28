@@ -137,7 +137,7 @@ export class RingCentralCallControl extends EventEmitter {
     if (message.event.indexOf('/telephony/sessions') === -1) {
       return;
     }
-    const { eventTime, telephonySessionId, sessionId, ...newData } = message.body;
+    const { eventTime, telephonySessionId, ...newData } = message.body;
     if (!telephonySessionId) {
       return;
     }
@@ -151,6 +151,8 @@ export class RingCentralCallControl extends EventEmitter {
       if (disconnectedParties.length === newData.parties.length) {
         return;
       }
+      // use first event's eventTime as session creationTime
+      newData.creationTime = eventTime;
       const newSession = new Session(newData, this._sdk, this._accountLevel);
       newSession.on('status', () => {
         this.onSessionStatusUpdated(newSession);
@@ -233,6 +235,8 @@ export class RingCentralCallControl extends EventEmitter {
         data.extensionId = this.extensionId;
         data.accountId = this.accountId;
         data.parties = data.parties.map(p => formatParty(p));
+        // since call session status API not provide the `sessionId`, so pick from presence here.
+        data.sessionId = activeCall.sessionId;
         const session = new Session(data, this._sdk, this._accountLevel);
         this._sessionsMap.set(
           activeCall.telephonySessionId,
