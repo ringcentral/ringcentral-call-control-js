@@ -61,10 +61,9 @@ export interface SessionData {
   accountId: string;
   parties: Party[];
   sessionId: string;
-  creationTime?: string;
+  creationTime: string;
   voiceCallToken?: string;
   sequence?: number;
-  eventTime?: string;
 }
 
 export interface ForwardParams {
