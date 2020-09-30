@@ -17,7 +17,7 @@ export enum PartyStatusCode {
   gone = 'Gone',
   parked = 'Parked',
   hold = 'Hold',
-  voicemail = 'VoiceMail',
+  voicemail = 'Voicemail',
   faxReceive = 'FaxReceive',
   voicemailScreening = 'VoiceMailScreening',
 }
