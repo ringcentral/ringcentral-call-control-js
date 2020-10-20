@@ -288,7 +288,8 @@ export class RingCentralCallControl extends EventEmitter {
     if (
       party &&
       party.status.code === PartyStatusCode.disconnected &&
-      party.status.reason !== 'Pickup'
+      party.status.reason !== 'Pickup' && // don't end when call switched
+      party.status.reason !== 'CallSwitch' // don't end when call switched
     ) {
       this._sessionsMap.delete(session.id);
     }
