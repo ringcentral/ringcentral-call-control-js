@@ -215,15 +215,6 @@ export class Session extends EventEmitter {
     this.on('status', ({ party }) => {
       this._onPartyUpdated(party);
     });
-
-    return new Proxy(this, {
-      get(target, name, receiver) {
-        if (!Reflect.has(target, name)) {
-          return target._data[name];
-        }
-        return Reflect.get(target, name, receiver);
-      },
-    });
   }
 
   _updatePartiesSequence(parties: Party[] = [], sequence?: Number) {
@@ -287,8 +278,32 @@ export class Session extends EventEmitter {
     return this.data.id;
   }
 
+  get accountId() {
+    return this.data.accountId;
+  }
+
+  get creationTime() {
+    return this.data.creationTime;
+  }
+
+  get extensionId() {
+    return this.data.extensionId;
+  }
+
+  get origin() {
+    return this.data.origin;
+  }
+
   get parties() {
     return this.data.parties || [];
+  }
+
+  get serverId() {
+    return this.data.serverId;
+  }
+
+  get sessionId() {
+    return this.data.sessionId;
   }
 
   get party() {
@@ -300,10 +315,17 @@ export class Session extends EventEmitter {
       }
       return p.extensionId === extensionId;
     });
+    if (parties.length === 0) {
+      return;
+    }
     if (parties.length === 1) {
       return parties[0];
     }
-    return parties.find(p => p.status.code !== PartyStatusCode.disconnected)
+    const activeParty = parties.find(p => p.status.code !== PartyStatusCode.disconnected);
+    if (activeParty) {
+      return activeParty;
+    }
+    return parties[parties.length - 1];
   }
 
   get otherParties() {
