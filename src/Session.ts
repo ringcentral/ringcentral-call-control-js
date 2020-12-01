@@ -64,6 +64,7 @@ export interface SessionData {
   creationTime: string;
   voiceCallToken?: string;
   sequence?: number;
+  isRingOutInboundLeg?: boolean;
 }
 
 export interface ForwardParams {
@@ -598,5 +599,9 @@ export class Session extends EventEmitter {
     return {
       userAgent: this._userAgent ? `${this._userAgent} ${USER_AGENT}` : USER_AGENT,
     };
+  }
+
+  get isRingOutInboundLeg() {
+    return this.data.isRingOutInboundLeg;
   }
 }

@@ -3,7 +3,7 @@ import { SDK as RingCentralSDK } from '@ringcentral/sdk';
 import { Session, SessionData, PartyStatusCode } from './Session';
 import { formatParty } from './formatParty';
 import { USER_AGENT } from './userAgent';
-
+import { isRingOutInboundLeg } from './helper';
 export interface SessionsMap {
   [key: string]: any;
 }
@@ -153,6 +153,8 @@ export class RingCentralCallControl extends EventEmitter {
       }
       // use first event's eventTime as session creationTime
       newData.creationTime = eventTime;
+      // mark if this session is ringout inbound leg
+      newData.isRingOutInboundLeg = isRingOutInboundLeg(newData, this.sessions);
       const newSession = new Session(newData, this._sdk, this._accountLevel);
       newSession.on('status', () => {
         this.onSessionStatusUpdated(newSession);
