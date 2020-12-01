@@ -10,6 +10,6 @@
     "outDir": "lib",
     "resolveJsonModule": true
   },
-  "files": ["src/index.ts", "src/Session.ts", "src/formatParty.ts", "src/userAgent.ts"],
+  "files": ["src/index.ts", "src/Session.ts", "src/formatParty.ts", "src/userAgent.ts","src/helper.ts"],
   "compileOnSave": true
 }

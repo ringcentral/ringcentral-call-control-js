@@ -66,5 +66,8 @@
         "diagnostics": false
       }
     }
+  },
+  "dependencies": {
+    "libphonenumber-js": "^1.7.29"
   }
 }
