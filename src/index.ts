@@ -172,7 +172,7 @@ export class RingCentralCallControl extends EventEmitter {
     }
   }
 
-  get sessions() {
+  get sessions(): Session[] {
     return Array.from(this._sessionsMap.values());
   }
 
