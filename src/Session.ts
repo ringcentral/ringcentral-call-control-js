@@ -55,6 +55,11 @@ export interface Party {
   recordings?: Recording[];
 }
 
+export interface Origin {
+  type:  'Call' | 'RingOut' | 'RingMe' | 'Conference' | 'GreetingsRecording' |
+    'VerificationCall' | 'TestCall';
+}
+
 export interface SessionData {
   id: string;
   extensionId: string;
@@ -64,7 +69,7 @@ export interface SessionData {
   creationTime: string;
   voiceCallToken?: string;
   sequence?: number;
-  isRingOutInboundLeg?: boolean;
+  origin: Origin;
 }
 
 export interface ForwardParams {
@@ -599,9 +604,5 @@ export class Session extends EventEmitter {
     return {
       userAgent: this._userAgent ? `${this._userAgent} ${USER_AGENT}` : USER_AGENT,
     };
-  }
-
-  get isRingOutInboundLeg() {
-    return this.data.isRingOutInboundLeg;
   }
 }

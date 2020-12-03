@@ -1,50 +1,49 @@
 
 import { Session, SessionData, Direction as callDirections } from './Session';
 
-export function isRingOutInboundLeg(newData: SessionData, allSessions: Session[]) {
-    let isRingOutLeg = false;
-    const { parties = [] } = newData || {};
-    const inboundParty = parties.find(
-        (party) => party.direction === callDirections.inbound,
-    );
-    if (!inboundParty || !Array.isArray(allSessions) || !allSessions.length) {
-        return isRingOutLeg;
+function ringOutInboundLegCheck(newData: SessionData, sessionMap: any) {
+    const allSessions: Session[] = Array.from(sessionMap.values());
+    const { parties = [], origin = { type: 'Call' } } = newData || {};
+    const party = parties[0];
+    let flag = false;
+    if (!party || origin.type === 'Call' && party.direction === callDirections.outbound) {
+        return flag;
     }
-    const ringOutSessions = allSessions.filter(
-        (s: Session) =>
-            s.party.direction === callDirections.outbound &&
-            s.party.ringOutRole === 'Initiator',
-    );
-    if (ringOutSessions.length) {
-        for (const outbound of ringOutSessions) {
-            const { party: outboundParty } = outbound;
-            switch (
-            Math.abs(parseInt(newData.sessionId, 10) - parseInt(outbound.sessionId, 10))
-            ) {
+    if (allSessions.length) {
+        for (const session of allSessions) {
+            const sessionIdGap = parseInt(newData.sessionId, 10) - parseInt(session.sessionId, 10);
+            const { party: existedSessionParty } = session;
+            switch (sessionIdGap) {
                 case 1000:
                 case 2000:
                 case 3000:
                 case 4000: {
-                    if (
-                        inboundParty.from &&
-                        inboundParty.to &&
-                        outboundParty &&
-                        outboundParty.from &&
-                        outboundParty.to &&
-                        (inboundParty.from.phoneNumber === outboundParty.to.phoneNumber) &&
-                        (inboundParty.to.phoneNumber === outboundParty.from.phoneNumber)
-                    ) {
-                        isRingOutLeg = true;
+                    if (party.direction === callDirections.inbound && party.from && party.to &&
+                        existedSessionParty.from && existedSessionParty.to && (party.from.phoneNumber === existedSessionParty.to.phoneNumber) &&
+                        (party.to.phoneNumber === existedSessionParty.from.phoneNumber)) {
+                        flag = true;
+                    }
+                    break;
+                }
+                case -1000:
+                case -2000:
+                case -3000:
+                case -4000: {
+                    if (party.direction === callDirections.outbound && party.from && party.to &&
+                        existedSessionParty.from && existedSessionParty.to && (party.from.phoneNumber === existedSessionParty.to.phoneNumber) &&
+                        (party.to.phoneNumber === existedSessionParty.from.phoneNumber)) {
+                        // remove already existed inbould leg from sessions
+                        sessionMap.delete(session.id);
+                        flag = false;
                     }
                     break;
                 }
                 default:
                     break;
             }
-            if (isRingOutLeg) {
-                break;
-            }
         }
     }
-    return isRingOutLeg;
+    return flag;
 }
+
+export { ringOutInboundLegCheck };
