@@ -154,7 +154,7 @@ export class RingCentralCallControl extends EventEmitter {
       // use first event's eventTime as session creationTime
       newData.creationTime = eventTime;
       // if new session is the inbound leg of ringout call then abandon it
-      const checkResult = ringOutInboundLegCheck(newData, this._sessionsMap);
+      const checkResult = ringOutInboundLegCheck(newData, this.sessions);
       if (checkResult.isRingOutInboundLeg) {
         return;
       }

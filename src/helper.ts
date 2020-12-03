@@ -1,8 +1,7 @@
 
 import { Session, SessionData, Direction as callDirections } from './Session';
 
-function ringOutInboundLegCheck(newData: SessionData, sessionMap: any) {
-    const allSessions: Session[] = Array.from(sessionMap.values());
+function ringOutInboundLegCheck(newData: SessionData, allSessions: Session[]) {
     const { parties = [], origin = { type: 'Call' } } = newData || {};
     const party = parties[0];
     const checkResult = {
