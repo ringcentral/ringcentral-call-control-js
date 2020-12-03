@@ -5,9 +5,12 @@ function ringOutInboundLegCheck(newData: SessionData, sessionMap: any) {
     const allSessions: Session[] = Array.from(sessionMap.values());
     const { parties = [], origin = { type: 'Call' } } = newData || {};
     const party = parties[0];
-    let flag = false;
+    const checkResult = {
+        isRingOutInboundLeg: false,
+        legSessionId: null,
+    };
     if (!party || origin.type === 'Call' && party.direction === callDirections.outbound) {
-        return flag;
+        return checkResult;
     }
     if (allSessions.length) {
         for (const session of allSessions) {
@@ -21,7 +24,7 @@ function ringOutInboundLegCheck(newData: SessionData, sessionMap: any) {
                     if (party.direction === callDirections.inbound && party.from && party.to &&
                         existedSessionParty.from && existedSessionParty.to && (party.from.phoneNumber === existedSessionParty.to.phoneNumber) &&
                         (party.to.phoneNumber === existedSessionParty.from.phoneNumber)) {
-                        flag = true;
+                        checkResult.isRingOutInboundLeg = true;
                     }
                     break;
                 }
@@ -32,9 +35,8 @@ function ringOutInboundLegCheck(newData: SessionData, sessionMap: any) {
                     if (party.direction === callDirections.outbound && party.from && party.to &&
                         existedSessionParty.from && existedSessionParty.to && (party.from.phoneNumber === existedSessionParty.to.phoneNumber) &&
                         (party.to.phoneNumber === existedSessionParty.from.phoneNumber)) {
-                        // remove already existed inbould leg from sessions
-                        sessionMap.delete(session.id);
-                        flag = false;
+                        checkResult.isRingOutInboundLeg = false;
+                        checkResult.legSessionId = session.id;
                     }
                     break;
                 }
@@ -43,7 +45,7 @@ function ringOutInboundLegCheck(newData: SessionData, sessionMap: any) {
             }
         }
     }
-    return flag;
+    return checkResult;
 }
 
 export { ringOutInboundLegCheck };
