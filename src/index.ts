@@ -159,7 +159,7 @@ export class RingCentralCallControl extends EventEmitter {
         return;
       }
       if(!checkResult.isRingOutInboundLeg && checkResult.legSessionId) {
-        // find a inbould leg then remove it from sessions
+        // if find an inbound leg then remove it from sessions
         this._sessionsMap.delete(checkResult.legSessionId)
       }
       const newSession = new Session(newData, this._sdk, this._accountLevel);
