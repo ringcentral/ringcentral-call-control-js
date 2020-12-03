@@ -55,6 +55,11 @@ export interface Party {
   recordings?: Recording[];
 }
 
+export interface Origin {
+  type:  'Call' | 'RingOut' | 'RingMe' | 'Conference' | 'GreetingsRecording' |
+    'VerificationCall' | 'TestCall';
+}
+
 export interface SessionData {
   id: string;
   extensionId: string;
@@ -64,6 +69,7 @@ export interface SessionData {
   creationTime: string;
   voiceCallToken?: string;
   sequence?: number;
+  origin: Origin;
 }
 
 export interface ForwardParams {
