@@ -2,6 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/ringcentral/ringcentral-call-control-js/badge.svg?branch=master)](https://coveralls.io/github/ringcentral/ringcentral-call-control-js?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/ringcentral-call-control.svg?style=flat-square)](https://www.npmjs.com/package/ringcentral-call-control)
+[![Build Status](https://github.com/ringcentral/ringcentral-call-control-js/workflows/CI%20Pipeline/badge.svg?branch=master)](https://github.com/ringcentral/ringcentral-call-control-js/actions)
 
 RingCentral Call Control JS SDK is wrapper of RingCentral JS SDK to help developers call [RingCentral Call Control API](https://developers.ringcentral.com/api-reference/Call-Control/) more functionally.
 
