@@ -16,13 +16,15 @@ function getMockEventMessage({
   sequence,
   code,
   reason,
-  party;
+  party,
+  partyId,
 }: {
   template: any;
   telephonySessionId?: string;
   sequence?: number;
   code?: string;
   reason?: string;
+  partyId?: string;
   party?: any;
 }) {
   let partyData = party || template.body.parties[0];
@@ -34,6 +36,7 @@ function getMockEventMessage({
       sequence: sequence || template.body.sequence,
       parties: [{
         ...partyData,
+        id: partyId || partyData.id,
         status: {
           ...partyData.status,
           code: code || partyData.status.code,
@@ -223,12 +226,13 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundDisconnectedMessage,
         telephonySessionId: '12345',
+        partyId: '12345-1',
       }));
       expect(rcCallControl.sessions.length).toEqual(0);
       expect(newEventTriggered).toEqual(false);
     });
 
-    it('should create new sessions and new event when get telephony session event', () => {
+    it('should create new session and new event when get telephony session event', () => {
       let newEventTriggered = false;
       rcCallControl.once('new', () => {
         newEventTriggered = true;
@@ -236,6 +240,7 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundSetupMessage,
         telephonySessionId: '123456',
+        partyId: '123456-1',
       }));
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].parties.length).toEqual(1);
@@ -246,21 +251,36 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionInboundProceedingMessage,
         telephonySessionId: '123456',
+        partyId: '123456-2',
       }));
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].parties.length).toEqual(2);
     });
 
+    it('should not update current party when get telephony session with outdated sequence', () => {
+      const oldStatus = rcCallControl.sessions[0].parties[0].status;
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundSetupMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+        sequence: telephonySessionOutboundSetupMessage.body.sequence - 1,
+        code: 'Disconnected',
+      }));
+      expect(rcCallControl.sessions.length).toEqual(1);
+      expect(rcCallControl.sessions[0].parties[0].status.code).toEqual(oldStatus.code);
+    });
+
     it('should not update session when get telephony session with outdated sequence', () => {
-      const oldStatus = rcCallControl.sessions[0].party.status;
+      const oldStatus = rcCallControl.sessions[0].parties[1].status;
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionInboundProceedingMessage,
         telephonySessionId: '123456',
+        partyId: '123456-2',
         sequence: telephonySessionInboundProceedingMessage.body.sequence - 1,
         code: 'Disconnected',
       }));
       expect(rcCallControl.sessions.length).toEqual(1);
-      expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
+      expect(rcCallControl.sessions[0].parties[1].status.code).toEqual(oldStatus.code);
     });
 
     it('should not update session when get telephony session no updated event', () => {
@@ -268,25 +288,28 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionInboundProceedingMessage,
         telephonySessionId: '123456',
+        partyId: '123456-2',
       }));
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
     });
 
-    it('should not delete session when get telephony session disconnected event with pickup reason', () => {
+    it('should not delete session when get telephony session disconnected event with CallSwitch reason', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundDisconnectedMessage,
         telephonySessionId: '123456',
-        reason: 'Pickup',
+        partyId: '123456-1',
+        reason: 'CallSwitch',
       }));
       expect(rcCallControl.sessions.length).toEqual(1);
-      expect(rcCallControl.sessions[0].party).toEqual(undefined);
+      expect(rcCallControl.sessions[0].party.status.reason).toEqual('CallSwitch');
     });
 
     it('should delete session when get telephony session disconnected event', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundDisconnectedMessage,
         telephonySessionId: '123456',
+        partyId: '123456-1',
       }));
       expect(rcCallControl.sessions.length).toEqual(0);
     });
@@ -295,12 +318,14 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundDisconnectedMessage,
         telephonySessionId: '1234567',
+        partyId: '1234567-1',
         sequence: 3,
       }));
       expect(rcCallControl.sessions.length).toEqual(0);
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundSetupMessage,
         telephonySessionId: '1234567',
+        partyId: '1234567-1',
         sequence: 2,
       }));
       expect(rcCallControl.sessions.length).toEqual(0);
@@ -308,15 +333,17 @@ describe('RingCentral Call Control :: Index', () => {
 
     it('should clear expired sequence data when get a new telephony session event', () => {
       const sequenceDataMap = rcCallControl.eventSequenceMap;
-      sequenceDataMap['old-session-id'] = {
+      sequenceDataMap['old-telephone-session-id-1'] = {
         sequence: 1,
+        telephoneSessionId: 'old-telephone-session-id',
         updatedAt: Date.now() - 61000,
       };
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundDisconnectedMessage,
         telephonySessionId: '123456',
+        partyId: '123456-1',
       }));
-      expect(!!sequenceDataMap['old-session-id']).toEqual(false);
+      expect(!!sequenceDataMap['old-telephone-session-id-1']).toEqual(false);
     });
 
     it('should emit new event when get telephony session first my party', () => {
@@ -327,6 +354,7 @@ describe('RingCentral Call Control :: Index', () => {
       const notPartiesMessage = getMockEventMessage({
         template: telephonySessionOutboundSetupMessage,
         telephonySessionId: '12345678',
+        partyId: '12345678-1',
         party: {
           ...telephonySessionInboundProceedingMessage.body.parties[0],
         }
@@ -340,18 +368,20 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundSetupMessage,
         telephonySessionId: '12345678',
+        partyId: '12345678-2',
       }));
       expect(newEventTriggered).toEqual(true);
     });
 
     it('should not clear expired sequence data when telephony session is still existed', () => {
       const sequenceDataMap = rcCallControl.eventSequenceMap;
-      sequenceDataMap['12345678'].updatedAt = Date.now() - 61000;
+      sequenceDataMap['12345678-2'].updatedAt = Date.now() - 61000;
       rcCallControl.onNotificationEvent(getMockEventMessage({
         template: telephonySessionOutboundDisconnectedMessage,
         telephonySessionId: '123456',
+        partyId: '123456-1',
       }));
-      expect(!!sequenceDataMap['12345678']).toEqual(true);
+      expect(!!sequenceDataMap['12345678-2']).toEqual(true);
     });
   });
 

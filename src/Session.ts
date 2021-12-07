@@ -211,10 +211,6 @@ export class Session extends EventEmitter {
     this._sdk = sdk;
     this._accountLevel = !!accountLevel;
     this._userAgent = userAgent;
-
-    this.on('status', ({ party }) => {
-      this._onPartyUpdated(party);
-    });
   }
 
   public onUpdated(data: SessionData) {
@@ -239,15 +235,6 @@ export class Session extends EventEmitter {
         return;
       }
     });
-  }
-
-  _onPartyUpdated(party) {
-    if (
-      party.status.code === PartyStatusCode.disconnected &&
-      party.status.reason === 'Pickup'
-    ) {
-      this._data.parties = this.parties.filter(p => p.id !== party.id);
-    }
   }
 
   public restore(data: SessionData) {

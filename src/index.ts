@@ -38,6 +38,7 @@ export interface Device {
 export interface EventSequenceData {
   sequence: number;
   updatedAt: number;
+  telephonySessionId: string;
 }
 
 export interface EventSequenceMap {
@@ -147,11 +148,11 @@ export class RingCentralCallControl extends EventEmitter {
     if (message.event.indexOf('/telephony/sessions') === -1) {
       return;
     }
-    const { eventTime, telephonySessionId, sequence, ...newData } = message.body;
+    const { eventTime, telephonySessionId, ...newData } = message.body;
     if (!telephonySessionId) {
       return;
     }
-    const validatedSequence = this.checkSequence(telephonySessionId, sequence);
+    const validatedSequence = this.checkSequence(message.body);
     if (!validatedSequence) {
       return;
     }
@@ -193,14 +194,16 @@ export class RingCentralCallControl extends EventEmitter {
     }
   }
 
-  private checkSequence(telephonySessionId, sequence) {
+  private checkSequence({ sequence, telephonySessionId, parties }) {
     let result = true;
-    const eventSequenceData = this._eventSequenceMap[telephonySessionId];
+    const partyId = parties[0] && parties[0].id;
+    const eventSequenceData = this._eventSequenceMap[partyId];
     if (eventSequenceData && eventSequenceData.sequence > sequence) {
       result = false;
     } else {
-      this._eventSequenceMap[telephonySessionId] = {
+      this._eventSequenceMap[partyId] = {
         sequence,
+        telephonySessionId,
         updatedAt: Date.now(),
       };
     }
@@ -209,11 +212,11 @@ export class RingCentralCallControl extends EventEmitter {
   }
 
   private cleanExpiredSequenceData() {
-    Object.keys(this._eventSequenceMap).forEach((telephonySessionId) => {
-      const eventSequenceData = this._eventSequenceMap[telephonySessionId];
-      const existedSession = this._sessionsMap.get(telephonySessionId);
+    Object.keys(this._eventSequenceMap).forEach((partyId) => {
+      const eventSequenceData = this._eventSequenceMap[partyId];
+      const existedSession = this._sessionsMap.get(eventSequenceData.telephonySessionId);
       if (!existedSession && eventSequenceData.updatedAt + 60000 < Date.now()) {
-        delete this._eventSequenceMap[telephonySessionId];
+        delete this._eventSequenceMap[partyId];
       }
     });
   }
