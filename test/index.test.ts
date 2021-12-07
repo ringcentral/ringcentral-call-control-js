@@ -306,6 +306,19 @@ describe('RingCentral Call Control :: Index', () => {
       expect(rcCallControl.sessions.length).toEqual(0);
     });
 
+    it('should clear expired sequence data when get a new telephony session event', () => {
+      const sequenceDataMap = rcCallControl.eventSequenceMap;
+      sequenceDataMap['old-session-id'] = {
+        sequence: 1,
+        updatedAt: Date.now() - 61000,
+      };
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '123456',
+      }));
+      expect(!!sequenceDataMap['old-session-id']).toEqual(false);
+    });
+
     it('should emit new event when get telephony session first my party', () => {
       let newEventTriggered = false;
       rcCallControl.once('new', () => {
@@ -329,6 +342,16 @@ describe('RingCentral Call Control :: Index', () => {
         telephonySessionId: '12345678',
       }));
       expect(newEventTriggered).toEqual(true);
+    });
+
+    it('should not clear expired sequence data when telephony session is still existed', () => {
+      const sequenceDataMap = rcCallControl.eventSequenceMap;
+      sequenceDataMap['12345678'].updatedAt = Date.now() - 61000;
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '123456',
+      }));
+      expect(!!sequenceDataMap['12345678']).toEqual(true);
     });
   });
 

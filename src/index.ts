@@ -37,7 +37,7 @@ export interface Device {
 
 export interface EventSequenceData {
   sequence: number;
-  updateAt: number;
+  updatedAt: number;
 }
 
 export interface EventSequenceMap {
@@ -201,7 +201,7 @@ export class RingCentralCallControl extends EventEmitter {
     } else {
       this._eventSequenceMap[telephonySessionId] = {
         sequence,
-        updateAt: Date.now(),
+        updatedAt: Date.now(),
       };
     }
     this.cleanExpiredSequenceData();
@@ -211,7 +211,8 @@ export class RingCentralCallControl extends EventEmitter {
   private cleanExpiredSequenceData() {
     Object.keys(this._eventSequenceMap).forEach((telephonySessionId) => {
       const eventSequenceData = this._eventSequenceMap[telephonySessionId];
-      if (eventSequenceData.updateAt + 60000 < Date.now()) {
+      const existedSession = this._sessionsMap.get(telephonySessionId);
+      if (!existedSession && eventSequenceData.updatedAt + 60000 < Date.now()) {
         delete this._eventSequenceMap[telephonySessionId];
       }
     });
@@ -413,5 +414,9 @@ export class RingCentralCallControl extends EventEmitter {
     return {
       userAgent: this._userAgent ? `${this._userAgent} ${USER_AGENT}` : USER_AGENT,
     };
+  }
+
+  get eventSequenceMap() {
+    return this._eventSequenceMap;
   }
 }
