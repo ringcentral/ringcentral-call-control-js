@@ -347,11 +347,28 @@ export class Session extends EventEmitter {
   }
 
   async drop() {
-    await this._sdk.platform().delete(
-      `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
-      null,
-      this.requestOptions
-    );
+    try {
+      await this._sdk.platform().delete(
+        `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
+        null,
+        this.requestOptions
+      );
+    } catch (e) {
+      if (e && e.response && e.response.status === 404) {
+        // Force drop session at client side
+        const disconnectedParty = {
+          ...this.party,
+          status: {
+            ...this.party.status,
+            code: PartyStatusCode.disconnected,
+          },
+        };
+        this.saveNewPartyData(disconnectedParty);
+        this.emit('status', { party: this.party });
+        return;
+      }
+      throw e;
+    }
   }
 
   private saveNewPartyData(rawParty) {
