@@ -68,7 +68,6 @@ export interface SessionData {
   sessionId: string;
   creationTime: string;
   voiceCallToken?: string;
-  sequence?: number;
   origin: Origin;
 }
 
@@ -202,36 +201,16 @@ function diffParties(oldParties: Party[], updatedParties: Party[]) {
 
 export class Session extends EventEmitter {
   private _data: any;
-  private _eventPartySequences: any;
   private _sdk: RingCentralSDK;
   private _accountLevel: boolean;
   private _userAgent: string;
 
   constructor(rawData: SessionData, sdk: RingCentralSDK, accountLevel: boolean, userAgent?: string) {
     super();
-    const { sequence, ...data } = rawData;
-    this._data = data;
-    this._eventPartySequences = {};
+    this._data = { ...rawData };
     this._sdk = sdk;
     this._accountLevel = !!accountLevel;
     this._userAgent = userAgent;
-
-    this._updatePartiesSequence(this._data.parties, sequence);
-
-    this.on('status', ({ party }) => {
-      this._onPartyUpdated(party);
-    });
-  }
-
-  _updatePartiesSequence(parties: Party[] = [], sequence?: Number) {
-    if (!sequence) {
-      return;
-    }
-    parties.forEach((party) => {
-      if (!this._eventPartySequences[party.id] || this._eventPartySequences[party.id] < sequence) {
-        this._eventPartySequences[party.id] = sequence;
-      }
-    });
   }
 
   public onUpdated(data: SessionData) {
@@ -240,10 +219,6 @@ export class Session extends EventEmitter {
       if (diff.type === 'new') {
         this._data.parties = [].concat(this.parties).concat(diff.party);
         this.emit('status', { party: diff.party });
-        return;
-      }
-      const lastSequence = this._eventPartySequences[diff.party.id]
-      if (lastSequence && data.sequence < lastSequence) {
         return;
       }
       if (diff.type === 'update') {
@@ -260,16 +235,6 @@ export class Session extends EventEmitter {
         return;
       }
     });
-    this._updatePartiesSequence(data.parties, data.sequence);
-  }
-
-  _onPartyUpdated(party) {
-    if (
-      party.status.code === PartyStatusCode.disconnected &&
-      party.status.reason === 'Pickup'
-    ) {
-      this._data.parties = this.parties.filter(p => p.id !== party.id);
-    }
   }
 
   public restore(data: SessionData) {
@@ -369,11 +334,28 @@ export class Session extends EventEmitter {
   }
 
   async drop() {
-    await this._sdk.platform().delete(
-      `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
-      null,
-      this.requestOptions
-    );
+    try {
+      await this._sdk.platform().delete(
+        `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
+        null,
+        this.requestOptions
+      );
+    } catch (e) {
+      if (e && e.response && e.response.status === 404) {
+        // Force drop session at client side
+        const disconnectedParty = {
+          ...this.party,
+          status: {
+            ...this.party.status,
+            code: PartyStatusCode.disconnected,
+          },
+        };
+        this.saveNewPartyData(disconnectedParty);
+        this.emit('status', { party: this.party });
+        return;
+      }
+      throw e;
+    }
   }
 
   private saveNewPartyData(rawParty) {

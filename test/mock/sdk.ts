@@ -270,12 +270,13 @@ export function mockTelephoneSessionUnholdParty(mockResponse = {}) {
   });
 }
 
-export function mockTelephoneSessionDrop(mockResponse = {}) {
+export function mockTelephoneSessionDrop({ status = 200 } = {}) {
   mockApi({
     url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId',
     method: 'DELETE',
     body: {},
     isOnce: true,
+    status,
   });
 }
 

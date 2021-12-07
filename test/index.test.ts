@@ -10,6 +10,43 @@ import * as telephonySessionOutboundData from './mock/data/telephonySessionOutbo
 let sdk;
 let rcCallControl;
 
+function getMockEventMessage({
+  template,
+  telephonySessionId,
+  sequence,
+  code,
+  reason,
+  party,
+  partyId,
+}: {
+  template: any;
+  telephonySessionId?: string;
+  sequence?: number;
+  code?: string;
+  reason?: string;
+  partyId?: string;
+  party?: any;
+}) {
+  let partyData = party || template.body.parties[0];
+  return {
+    ...template,
+    body: {
+      ...template.body,
+      telephonySessionId: telephonySessionId || template.body.telephonySessionId,
+      sequence: sequence || template.body.sequence,
+      parties: [{
+        ...partyData,
+        id: partyId || partyData.id,
+        status: {
+          ...partyData.status,
+          code: code || partyData.status.code,
+          reason: reason || partyData.status.reason,
+        },
+      }]
+    },
+  };
+}
+
 describe('RingCentral Call Control :: Index', () => {
   beforeAll(async () => {
     mock.mockAuthentication();
@@ -20,7 +57,7 @@ describe('RingCentral Call Control :: Index', () => {
   describe('Initialize', () => {
     beforeAll(async () => {
       mock.mockDevice();
-      mock.mockExtensionInfo()
+      mock.mockExtensionInfo();
       mock.mockPresence();
       mock.mockTelephoneSession();
       rcCallControl = new RingCentralCallControl({ sdk });
@@ -75,7 +112,7 @@ describe('RingCentral Call Control :: Index', () => {
         sdk,
         preloadDevices: false,
         preloadSessions: false,
-        extensionInfo,
+        extensionInfo: extensionInfo as any,
       });
       await rcCallControl.initialize();
     });
@@ -117,7 +154,7 @@ describe('RingCentral Call Control :: Index', () => {
         sdk,
         preloadDevices: false,
         preloadSessions: false,
-        extensionInfo,
+        extensionInfo: extensionInfo as any,
       });
       await callControl.initialize();
       expect(callControl.sessions.length).toEqual(0);
@@ -137,7 +174,7 @@ describe('RingCentral Call Control :: Index', () => {
       const callControl = new RingCentralCallControl({
         sdk,
         preloadDevices: false,
-        extensionInfo,
+        extensionInfo: extensionInfo as any,
       });
       await callControl.initialize();
       expect(callControl.sessions.length).toEqual(1);
@@ -186,77 +223,127 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.once('new', () => {
         newEventTriggered = true;
       });
-      rcCallControl.onNotificationEvent(telephonySessionOutboundDisconnectedMessage);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '12345',
+        partyId: '12345-1',
+      }));
       expect(rcCallControl.sessions.length).toEqual(0);
       expect(newEventTriggered).toEqual(false);
     });
 
-    it('should create new sessions and new event when get telephony session event', () => {
+    it('should create new session and new event when get telephony session event', () => {
       let newEventTriggered = false;
       rcCallControl.once('new', () => {
         newEventTriggered = true;
       });
-      rcCallControl.onNotificationEvent(telephonySessionOutboundSetupMessage);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundSetupMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+      }));
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].parties.length).toEqual(1);
       expect(newEventTriggered).toEqual(true);
     });
 
     it('should update session when get telephony session updated event', () => {
-      rcCallControl.onNotificationEvent(telephonySessionInboundProceedingMessage);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionInboundProceedingMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-2',
+      }));
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].parties.length).toEqual(2);
     });
 
-    it('should not update session when get telephony session with outdated sequence', () => {
-      const oldStatus = rcCallControl.sessions[0].party.status;
-      rcCallControl.onNotificationEvent({
-        ...telephonySessionInboundProceedingMessage,
-        body: {
-          ...telephonySessionInboundProceedingMessage.body,
-          sequence: telephonySessionInboundProceedingMessage.body.sequence - 1,
-          parties: [{
-            ...telephonySessionInboundProceedingMessage.body.parties[0],
-            status: {
-              code: 'Disconnected',
-            }
-          }]
-        }
-      });
+    it('should not update current party when get telephony session with outdated sequence', () => {
+      const oldStatus = rcCallControl.sessions[0].parties[0].status;
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundSetupMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+        sequence: telephonySessionOutboundSetupMessage.body.sequence - 1,
+        code: 'Disconnected',
+      }));
       expect(rcCallControl.sessions.length).toEqual(1);
-      expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
+      expect(rcCallControl.sessions[0].parties[0].status.code).toEqual(oldStatus.code);
+    });
+
+    it('should not update session when get telephony session with outdated sequence', () => {
+      const oldStatus = rcCallControl.sessions[0].parties[1].status;
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionInboundProceedingMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-2',
+        sequence: telephonySessionInboundProceedingMessage.body.sequence - 1,
+        code: 'Disconnected',
+      }));
+      expect(rcCallControl.sessions.length).toEqual(1);
+      expect(rcCallControl.sessions[0].parties[1].status.code).toEqual(oldStatus.code);
     });
 
     it('should not update session when get telephony session no updated event', () => {
       const oldStatus = rcCallControl.sessions[0].party.status;
-      rcCallControl.onNotificationEvent(telephonySessionInboundProceedingMessage);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionInboundProceedingMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-2',
+      }));
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(rcCallControl.sessions[0].party.status.code).toEqual(oldStatus.code);
     });
 
-    it('should delete session when get telephony session disconnected event with pickup reason', () => {
-      rcCallControl.onNotificationEvent({
-        ...telephonySessionOutboundDisconnectedMessage,
-        body: {
-          ...telephonySessionOutboundDisconnectedMessage.body,
-          parties: [
-            {
-              ...telephonySessionOutboundDisconnectedMessage.body.parties[0],
-              status: {
-                ...telephonySessionOutboundDisconnectedMessage.body.parties[0].status,
-                reason: 'Pickup'
-              }
-            }
-          ]
-        }
-      });
+    it('should not delete session when get telephony session disconnected event with CallSwitch reason', () => {
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+        reason: 'CallSwitch',
+      }));
       expect(rcCallControl.sessions.length).toEqual(1);
-      expect(rcCallControl.sessions[0].party).toEqual(undefined);
+      expect(rcCallControl.sessions[0].party.status.reason).toEqual('CallSwitch');
     });
 
     it('should delete session when get telephony session disconnected event', () => {
-      rcCallControl.onNotificationEvent(telephonySessionOutboundDisconnectedMessage);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+      }));
       expect(rcCallControl.sessions.length).toEqual(0);
+    });
+
+    it('should not add session after get telephony session Setup event with wrong sequence', () => {
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '1234567',
+        partyId: '1234567-1',
+        sequence: 3,
+      }));
+      expect(rcCallControl.sessions.length).toEqual(0);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundSetupMessage,
+        telephonySessionId: '1234567',
+        partyId: '1234567-1',
+        sequence: 2,
+      }));
+      expect(rcCallControl.sessions.length).toEqual(0);
+    });
+
+    it('should clear expired sequence data when get a new telephony session event', () => {
+      const sequenceDataMap = rcCallControl.eventSequenceMap;
+      sequenceDataMap['old-telephone-session-id-1'] = {
+        sequence: 1,
+        telephoneSessionId: 'old-telephone-session-id',
+        updatedAt: Date.now() - 61000,
+      };
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+      }));
+      expect(!!sequenceDataMap['old-telephone-session-id-1']).toEqual(false);
     });
 
     it('should emit new event when get telephony session first my party', () => {
@@ -264,23 +351,37 @@ describe('RingCentral Call Control :: Index', () => {
       rcCallControl.once('new', () => {
         newEventTriggered = true;
       });
-      const notPartiesMessage = {
-        ...telephonySessionOutboundSetupMessage,
-        body: {
-          ...telephonySessionOutboundSetupMessage.body,
-          parties: [{
-            ...telephonySessionInboundProceedingMessage.body.parties[0]
-          }],
+      const notPartiesMessage = getMockEventMessage({
+        template: telephonySessionOutboundSetupMessage,
+        telephonySessionId: '12345678',
+        partyId: '12345678-1',
+        party: {
+          ...telephonySessionInboundProceedingMessage.body.parties[0],
         }
-      }
+      });
       rcCallControl.onNotificationEvent(notPartiesMessage);
       expect(rcCallControl.sessions.length).toEqual(1);
       expect(!!rcCallControl.sessions[0].party).toEqual(false);
       expect(rcCallControl.sessions[0].otherParties.length).toEqual(1);
       expect(rcCallControl.sessions[0].parties.length).toEqual(1);
       expect(newEventTriggered).toEqual(false);
-      rcCallControl.onNotificationEvent(telephonySessionOutboundSetupMessage);
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundSetupMessage,
+        telephonySessionId: '12345678',
+        partyId: '12345678-2',
+      }));
       expect(newEventTriggered).toEqual(true);
+    });
+
+    it('should not clear expired sequence data when telephony session is still existed', () => {
+      const sequenceDataMap = rcCallControl.eventSequenceMap;
+      sequenceDataMap['12345678-2'].updatedAt = Date.now() - 61000;
+      rcCallControl.onNotificationEvent(getMockEventMessage({
+        template: telephonySessionOutboundDisconnectedMessage,
+        telephonySessionId: '123456',
+        partyId: '123456-1',
+      }));
+      expect(!!sequenceDataMap['12345678-2']).toEqual(true);
     });
   });
 

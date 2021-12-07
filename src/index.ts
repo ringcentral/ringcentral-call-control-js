@@ -35,6 +35,16 @@ export interface Device {
   lastLocationReportTime: string;
 }
 
+export interface EventSequenceData {
+  sequence: number;
+  updatedAt: number;
+  telephonySessionId: string;
+}
+
+export interface EventSequenceMap {
+  [key: string]: EventSequenceData;
+}
+
 export interface Account {
   id: string;
 }
@@ -78,6 +88,7 @@ export class RingCentralCallControl extends EventEmitter {
   private _preloadSessions: boolean;
   private _preloadDevices: boolean;
   private _userAgent: string;
+  private _eventSequenceMap: EventSequenceMap = {};
 
   constructor({
     sdk,
@@ -141,6 +152,10 @@ export class RingCentralCallControl extends EventEmitter {
     if (!telephonySessionId) {
       return;
     }
+    const validatedSequence = this.checkSequence(message.body);
+    if (!validatedSequence) {
+      return;
+    }
     const existedSession = this._sessionsMap.get(telephonySessionId);
     newData.id = telephonySessionId;
     newData.extensionId = this.extensionId;
@@ -179,6 +194,33 @@ export class RingCentralCallControl extends EventEmitter {
     }
   }
 
+  private checkSequence({ sequence, telephonySessionId, parties }) {
+    let result = true;
+    const partyId = parties[0] && parties[0].id;
+    const eventSequenceData = this._eventSequenceMap[partyId];
+    if (eventSequenceData && eventSequenceData.sequence > sequence) {
+      result = false;
+    } else {
+      this._eventSequenceMap[partyId] = {
+        sequence,
+        telephonySessionId,
+        updatedAt: Date.now(),
+      };
+    }
+    this.cleanExpiredSequenceData();
+    return result;
+  }
+
+  private cleanExpiredSequenceData() {
+    Object.keys(this._eventSequenceMap).forEach((partyId) => {
+      const eventSequenceData = this._eventSequenceMap[partyId];
+      const existedSession = this._sessionsMap.get(eventSequenceData.telephonySessionId);
+      if (!existedSession && eventSequenceData.updatedAt + 60000 < Date.now()) {
+        delete this._eventSequenceMap[partyId];
+      }
+    });
+  }
+
   get sessions(): Session[] {
     return Array.from(this._sessionsMap.values());
   }
@@ -193,7 +235,7 @@ export class RingCentralCallControl extends EventEmitter {
         await this._sdk.platform().get('/restapi/v1.0/account/~/extension/~', null, this.requestOptions);
       this._currentExtension = await response.json();
     } catch (e) {
-      console.error('Fetch presence error', e);
+      console.error('Fetch extension info error', e);
     }
   }
 
@@ -375,5 +417,9 @@ export class RingCentralCallControl extends EventEmitter {
     return {
       userAgent: this._userAgent ? `${this._userAgent} ${USER_AGENT}` : USER_AGENT,
     };
+  }
+
+  get eventSequenceMap() {
+    return this._eventSequenceMap;
   }
 }

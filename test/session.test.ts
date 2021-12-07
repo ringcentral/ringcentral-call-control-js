@@ -112,6 +112,28 @@ describe('RingCentral Call Control :: Session', () => {
       expect(noException).toEqual(true);
     });
 
+    it('should set disconnected event when drop with 404', async () => {
+      mock.mockTelephoneSessionDrop({ status: 404});
+      let disconnectedEvent = false;
+      session.on('status', ({ party }) => {
+        disconnectedEvent = party.status.code == 'Disconnected';
+      })
+      await session.drop();
+      expect(disconnectedEvent).toEqual(true);
+      expect(session.party.status.code).toEqual('Disconnected');
+    });
+
+    it('should throw error when drop with 500', async () => {
+      mock.mockTelephoneSessionDrop({ status: 500});
+      let noException = true;
+      try {
+        await session.drop();
+      } catch (e) {
+        noException = false;
+      }
+      expect(noException).toEqual(false);
+    });
+
     it('should transfer successfully', async () => {
       mock.mockTelephoneSessionTransferParty();
       const party = await session.transfer({ phoneNumber: '+1234567890' });

@@ -84,7 +84,7 @@ $(function() {
           refreshCallList();
         });
       });
-      $('.modal').modal('hide');
+      $loadingModal.modal('hide');
     }
     if (rcCallControl.ready) {
       onInitializedEvent();
