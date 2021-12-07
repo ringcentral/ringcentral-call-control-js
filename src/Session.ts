@@ -207,8 +207,7 @@ export class Session extends EventEmitter {
 
   constructor(rawData: SessionData, sdk: RingCentralSDK, accountLevel: boolean, userAgent?: string) {
     super();
-    const { sequence, ...data } = rawData;
-    this._data = data;
+    this._data = { ...rawData };
     this._sdk = sdk;
     this._accountLevel = !!accountLevel;
     this._userAgent = userAgent;
