@@ -68,7 +68,6 @@ export interface SessionData {
   sessionId: string;
   creationTime: string;
   voiceCallToken?: string;
-  sequence?: number;
   origin: Origin;
 }
 
@@ -202,7 +201,6 @@ function diffParties(oldParties: Party[], updatedParties: Party[]) {
 
 export class Session extends EventEmitter {
   private _data: any;
-  private _sequence: any;
   private _sdk: RingCentralSDK;
   private _accountLevel: boolean;
   private _userAgent: string;
@@ -211,7 +209,6 @@ export class Session extends EventEmitter {
     super();
     const { sequence, ...data } = rawData;
     this._data = data;
-    this._sequence = sequence || -1;
     this._sdk = sdk;
     this._accountLevel = !!accountLevel;
     this._userAgent = userAgent;
@@ -223,7 +220,6 @@ export class Session extends EventEmitter {
 
   public onUpdated(data: SessionData) {
     const partiesDiff =  diffParties(this.parties, data.parties);
-    this._sequence = data.sequence; // prevent wrong sequence at RingCentralCallControl class
     partiesDiff.forEach((diff) => {
       if (diff.type === 'new') {
         this._data.parties = [].concat(this.parties).concat(diff.party);
