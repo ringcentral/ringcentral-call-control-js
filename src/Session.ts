@@ -202,7 +202,7 @@ function diffParties(oldParties: Party[], updatedParties: Party[]) {
 
 export class Session extends EventEmitter {
   private _data: any;
-  private _eventPartySequences: any;
+  private _sequence: any;
   private _sdk: RingCentralSDK;
   private _accountLevel: boolean;
   private _userAgent: string;
@@ -211,39 +211,23 @@ export class Session extends EventEmitter {
     super();
     const { sequence, ...data } = rawData;
     this._data = data;
-    this._eventPartySequences = {};
+    this._sequence = sequence || -1;
     this._sdk = sdk;
     this._accountLevel = !!accountLevel;
     this._userAgent = userAgent;
-
-    this._updatePartiesSequence(this._data.parties, sequence);
 
     this.on('status', ({ party }) => {
       this._onPartyUpdated(party);
     });
   }
 
-  _updatePartiesSequence(parties: Party[] = [], sequence?: Number) {
-    if (!sequence) {
-      return;
-    }
-    parties.forEach((party) => {
-      if (!this._eventPartySequences[party.id] || this._eventPartySequences[party.id] < sequence) {
-        this._eventPartySequences[party.id] = sequence;
-      }
-    });
-  }
-
   public onUpdated(data: SessionData) {
     const partiesDiff =  diffParties(this.parties, data.parties);
+    this._sequence = data.sequence; // prevent wrong sequence at RingCentralCallControl class
     partiesDiff.forEach((diff) => {
       if (diff.type === 'new') {
         this._data.parties = [].concat(this.parties).concat(diff.party);
         this.emit('status', { party: diff.party });
-        return;
-      }
-      const lastSequence = this._eventPartySequences[diff.party.id]
-      if (lastSequence && data.sequence < lastSequence) {
         return;
       }
       if (diff.type === 'update') {
@@ -260,7 +244,6 @@ export class Session extends EventEmitter {
         return;
       }
     });
-    this._updatePartiesSequence(data.parties, data.sequence);
   }
 
   _onPartyUpdated(party) {
