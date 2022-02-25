@@ -115,6 +115,8 @@ $ yarn start
 
 Open `http://localhost:8080/demo/`, and login with RingCentral Sandbox account to test.
 
+Get online demo [here](https://ringcentral.github.io/ringcentral-call-control-js/).
+
 ## API
 
 ### Init
