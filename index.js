@@ -6,7 +6,7 @@ $(function() {
   var subscription = null;
   var rcCallControl = null;
   var redirectUri = getRedirectUri();
-  var defaultClientId = '66TmFtzLTKaIQzLT-d71_w';
+  const defaultClientId = '66TmFtzLTKaIQzLT-d71_w';
 
   var $app = $('#app');
   var $authFlowTemplate = $('#template-auth-flow');
@@ -84,7 +84,7 @@ $(function() {
           refreshCallList();
         });
       });
-      $('.modal').modal('hide');
+      $loadingModal.modal('hide');
     }
     if (rcCallControl.ready) {
       onInitializedEvent();
