@@ -1,4 +1,5 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
+
 import { SDK as RingCentralSDK } from '@ringcentral/sdk';
 
 import { formatParty } from './formatParty';
@@ -323,7 +324,7 @@ export class Session extends EventEmitter {
   async reload() {
     const response = await this._sdk.platform().get(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
-      null,
+      undefined,
       this.requestOptions
     );
     const data = await response.json();
@@ -337,7 +338,7 @@ export class Session extends EventEmitter {
     try {
       await this._sdk.platform().delete(
         `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
-        null,
+        undefined,
         this.requestOptions
       );
     } catch (e) {
@@ -369,8 +370,8 @@ export class Session extends EventEmitter {
     const oldParty = this.party;
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${oldParty.id}/hold`,
-      null,
-      null,
+      undefined,
+      undefined,
       this.requestOptions,
     );
     const newParty = await response.json();
@@ -383,8 +384,8 @@ export class Session extends EventEmitter {
     const oldParty = this.party;
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${oldParty.id}/unhold`,
-      null,
-      null,
+      undefined,
+      undefined,
       this.requestOptions,
     );
     const newParty = await response.json();
@@ -396,8 +397,8 @@ export class Session extends EventEmitter {
   async toVoicemail() {
     await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/reject`,
-      null,
-      null,
+      undefined,
+      undefined,
       this.requestOptions,
     );
   }
@@ -406,7 +407,7 @@ export class Session extends EventEmitter {
     await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/ignore`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
   }
@@ -415,7 +416,7 @@ export class Session extends EventEmitter {
     await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/answer`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
   }
@@ -424,7 +425,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/reply`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
     const rawParty = await response.json();
@@ -437,7 +438,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/forward`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
     return response.json();
@@ -447,7 +448,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/transfer`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
     return response.json();
@@ -456,8 +457,8 @@ export class Session extends EventEmitter {
   async park() {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/park`,
-      null,
-      null,
+      undefined,
+      undefined,
       this.requestOptions,
     );
     return response.json();
@@ -480,7 +481,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/flip`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
     return response.json();
@@ -490,7 +491,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().send({
       method: 'PATCH',
       url: `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}`,
-      query: null,
+      query: undefined,
       body: params,
       userAgent: this.requestOptions.userAgent,
     });
@@ -514,8 +515,8 @@ export class Session extends EventEmitter {
   async createRecord() {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings`,
-      null,
-      null,
+      undefined,
+      undefined,
       this.requestOptions,
     );
     const recording = await response.json();
@@ -530,7 +531,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().send({
       method: 'PATCH',
       url: `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/recordings/${params.id}`,
-      query: null,
+      query: undefined,
       body: {
         active: params.active,
       },
@@ -558,7 +559,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/supervise`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
     return response.json();
@@ -568,7 +569,7 @@ export class Session extends EventEmitter {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/bring-in`,
       params,
-      null,
+      undefined,
       this.requestOptions,
     );
     return response.json();
