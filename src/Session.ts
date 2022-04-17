@@ -111,6 +111,11 @@ export interface AnswerParams {
   deviceId: string;
 }
 
+export interface BridgeParams {
+  telephonySessionId: string;
+  partyId: string;
+}
+
 export interface IgnoreParams {
   deviceId: string;
 }
@@ -447,6 +452,16 @@ export class Session extends EventEmitter {
   async transfer(params: TransferParams) {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/transfer`,
+      params,
+      undefined,
+      this.requestOptions,
+    );
+    return response.json();
+  }
+
+  async bridge(params: BridgeParams) {
+    const response = await this._sdk.platform().post(
+      `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/bridge`,
       params,
       undefined,
       this.requestOptions,
