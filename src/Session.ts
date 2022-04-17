@@ -454,6 +454,16 @@ export class Session extends EventEmitter {
     return response.json();
   }
 
+  async bridge(params: TransferParams) {
+    const response = await this._sdk.platform().post(
+      `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/bridge`,
+      params,
+      undefined,
+      this.requestOptions,
+    );
+    return response.json();
+  }
+
   async park() {
     const response = await this._sdk.platform().post(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${this.party.id}/park`,
