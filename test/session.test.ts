@@ -1,11 +1,12 @@
+import { formatParty } from '../src/formatParty';
 import { Session } from '../src/Session';
 import { USER_AGENT } from '../src/userAgent';
-import { formatParty } from '../src/formatParty';
 import * as extensionInfo from './mock/data/extensionInfo.json';
-import * as telephonySessionOutboundData from './mock/data/telephonySessionOutbound.json';
-import * as telephonySessionInboundData from './mock/data/telephonySessionInbound.json';
 import * as telephonyConferenceData from './mock/data/telephonyConference.json';
-
+import * as telephonySessionInboundData
+  from './mock/data/telephonySessionInbound.json';
+import * as telephonySessionOutboundData
+  from './mock/data/telephonySessionOutbound.json';
 import * as mock from './mock/sdk';
 
 let sdk;
@@ -140,6 +141,13 @@ describe('RingCentral Call Control :: Session', () => {
       expect(party.status.reason).toEqual('BlindTransfer');
     });
   })
+
+  it('should bridge successfully', async () => {
+    mock.mockTelephoneSessionBridgeParty();
+    const party = await session.bridge({ telephonySessionId: 's-a4a0d812557c5z1803a3eee14z97f6290000', partyId: 's-a4a0d812557c5z1803a3eee14z97f6290000-1'});
+    expect(party.status.reason).toEqual('AttendedTransfer');
+  });
+})
 
   describe('Inbound', () => {
     beforeEach(() => {
