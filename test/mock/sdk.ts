@@ -1,18 +1,26 @@
 import * as fetchMock from 'fetch-mock';
+
 import { SDK } from '@ringcentral/sdk';
 
-import * as extensionBody from './data/extensionInfo.json';
-import * as deviceBody from './data/device.json';
-import * as presenceBody from './data/presence.json';
 import * as accountPresenceBody from './data/accountPresence.json';
-import * as telephonySessionBody from './data/telephonySessionOutbound.json';
-import * as telephonySessionCallOutBody from './data/telephonySessionCallOut.json';
+import * as deviceBody from './data/device.json';
+import * as extensionBody from './data/extensionInfo.json';
+import * as presenceBody from './data/presence.json';
 import * as telephonyConferenceBody from './data/telephonyConference.json';
-import * as telephonySessionPartyBody from './data/telephonySessionOutboundParty.json';
-import * as telephonySessionPartyForwardBody from './data/telephonySessionInboundPartyForward.json';
-import * as telephonySessionPartyTransferBody from './data/telephonySessionOutboundPartyTransfer.json';
-import * as telephonyConferenceBringInBody from './data/telephonyConferenceBringIn.json'
-import * as telephonySessionInboundPartyBody from './data/telephonySessionInboundParty.json';
+import * as telephonyConferenceBringInBody
+  from './data/telephonyConferenceBringIn.json';
+import * as telephonySessionBridge from './data/telephonySessionBridge.json';
+import * as telephonySessionCallOutBody
+  from './data/telephonySessionCallOut.json';
+import * as telephonySessionInboundPartyBody
+  from './data/telephonySessionInboundParty.json';
+import * as telephonySessionPartyForwardBody
+  from './data/telephonySessionInboundPartyForward.json';
+import * as telephonySessionBody from './data/telephonySessionOutbound.json';
+import * as telephonySessionPartyBody
+  from './data/telephonySessionOutboundParty.json';
+import * as telephonySessionPartyTransferBody
+  from './data/telephonySessionOutboundPartyTransfer.json';
 
 export const mockServer = 'http://whatever';
 export function createSDK(options = {}) {
@@ -337,6 +345,16 @@ export function mockTelephoneSessionTransferParty(mockResponse = {}) {
   });
 }
 
+export function mockTelephoneSessionBridgeParty(mockResponse = {}) {
+  mockApi({
+    url: 'express:/restapi/v1.0/account/~/telephony/sessions/:sessionId/parties/:partyId/bridge',
+    method: 'POST',
+    body: {
+      ...telephonySessionBridge
+    },
+    isOnce: true,
+  });
+}
 
 export function mockTelephoneSessionRemoveParty(mockResponse = {}) {
   mockApi({

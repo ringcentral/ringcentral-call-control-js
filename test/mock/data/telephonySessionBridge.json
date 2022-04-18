@@ -1,0 +1,35 @@
+{
+    "accountId" : "153906004",
+    "attributes" : {},
+    "brandId" : "1210",
+    "direction" : "Outbound",
+    "extensionId" : "153906004",
+    "from" : {
+       "deviceId" : "30091004",
+       "extensionId" : "153906004",
+       "name" : "Klay test1",
+       "phoneNumber" : "+18445585565"
+    },
+    "id" : "p-a4a0d82257c9fz1803a3e5601z9856ea0000-1",
+    "muted" : false,
+    "owner" : {
+       "accountId" : "153906004",
+       "brandId" : "1210",
+       "extensionId" : "153906004"
+    },
+    "standAlone" : false,
+    "status" : {
+       "code" : "Gone",
+       "peerId" : {
+          "partyId" : "p-a4a0d812557c5z1803a3eee14z97f6290000-1",
+          "sessionId" : "s-a4a0d812557c5z1803a3eee14z97f6290000"
+       },
+       "reason" : "AttendedTransfer"
+    },
+    "to" : {
+       "extensionId" : "248452004",
+       "name" : "Something1 New1",
+       "phoneNumber" : "+18443223062"
+    }
+ }
+ 
