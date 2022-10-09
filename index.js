@@ -57,7 +57,9 @@ $(function() {
   }
 
   function showCallPage() {
-    $loadingModal.modal('show');
+    if (!rcCallControl.ready) {
+      $loadingModal.modal('show');
+    }
     $callPage = cloneTemplate($callTemplate);
     var $deviceSelect = $callPage.find('select[name=device]').eq(0);
     var $phoneNumber = $callPage.find('input[name=number]').eq(0);
@@ -84,7 +86,10 @@ $(function() {
           refreshCallList();
         });
       });
-      $loadingModal.modal('hide');
+      // need to wait loading modal to show then hide it
+      setTimeout(function() {
+        $loadingModal.modal('hide');
+      }, 2000);
     }
     if (rcCallControl.ready) {
       onInitializedEvent();
