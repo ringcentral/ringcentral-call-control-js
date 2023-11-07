@@ -575,11 +575,10 @@ export class Session extends EventEmitter {
   }
 
   async removeParty(partyId: string) {
-    const response = await this._sdk.platform().delete(
+    return await this._sdk.platform().delete(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${partyId}`,
       this.requestOptions,
     );
-    return response.json();
   }
 
   get requestOptions() {
