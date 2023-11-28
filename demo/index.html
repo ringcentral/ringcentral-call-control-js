@@ -219,7 +219,7 @@
 </script>
 <script type="text/html" id="template-incoming">
   <div class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
           <div class="modal-content">
               <div class="modal-header">
                 <h4 class="modal-title">Incoming Call</h4>
@@ -251,6 +251,18 @@
                     </div>
                     <div class="col-sm-4">
                         <button class="btn btn-primary" type="submit">Forward</button>
+                    </div>
+                  </div>
+                </form>
+                <hr/>
+                <form class="answer-form">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Answer</label>
+                    <div class="col-sm-5">
+                      <select class="form-control" name="device" required></select>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-primary" type="submit">Answer</button>
                     </div>
                   </div>
                 </form>
