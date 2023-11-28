@@ -29,21 +29,9 @@ $(function() {
 
   function initCallControl() {
     subscription = subscriptions.createSubscription();
-    var cachedSubscriptionData = rcsdk.cache().getItem('rc-call-control-subscription-key');
-    if (cachedSubscriptionData) {
-      try {
-        subscription.setSubscription(cachedSubscriptionData); // use the cache
-      } catch (e) {
-        console.warn('Cannot set subscription from cache data', e);
-        subscription.setEventFilters([
-          '/restapi/v1.0/account/~/extension/~/telephony/sessions',
-        ]);
-      }
-    } else {
-      subscription.setEventFilters([
-        '/restapi/v1.0/account/~/extension/~/telephony/sessions',
-      ]);
-    }
+    subscription.setEventFilters([
+      '/restapi/v1.0/account/~/extension/~/telephony/sessions',
+    ]);
     subscription.on([subscription.events.subscribeSuccess, subscription.events.renewSuccess], function() {
       rcsdk.cache().setItem(cacheKey, subscription.subscription());
     });
@@ -337,7 +325,31 @@ $(function() {
         $modal.modal('hide');
         showCallControlModal(session);
       }
-    })
+    });
+    var $deviceSelect = $modal.find('select[name=device]').eq(0);
+    $deviceSelect.empty();
+    var devices = rcCallControl.devices.filter(function(d) { return d.status === 'Online' });
+
+    devices.forEach(function (device) {
+      $deviceSelect.append('<option value="' + device.id + '">' + device.name + '</option>')
+    });
+    var $answerForm = $modal.find('.answer-form').eq(0);
+    $answerForm.on('submit', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var deviceId = $deviceSelect.val();
+      if (!deviceId) {
+        throw new Error('No device selected');
+      }
+      session.answer({
+        deviceId: deviceId,
+      }).then(function () {
+        console.log('answered');
+        $modal.modal('hide');
+      }).catch(function(e) {
+        console.error('answer failed', e.stack || e);
+      });
+    });
   }
 
   function onLoginSuccess(server, clientId) {

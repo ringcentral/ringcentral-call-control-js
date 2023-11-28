@@ -219,7 +219,7 @@
 </script>
 <script type="text/html" id="template-incoming">
   <div class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
           <div class="modal-content">
               <div class="modal-header">
                 <h4 class="modal-title">Incoming Call</h4>
@@ -254,6 +254,18 @@
                     </div>
                   </div>
                 </form>
+                <hr/>
+                <form class="answer-form">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Answer</label>
+                    <div class="col-sm-5">
+                      <select class="form-control" name="device" required></select>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-primary" type="submit">Answer</button>
+                    </div>
+                  </div>
+                </form>
               </div>
               <div class="modal-footer before-answer">
                 <button class="btn btn-warning toVoicemail">To Voicemail</button>
@@ -270,7 +282,7 @@
 <script type="text/javascript" src="https://unpkg.com/whatwg-fetch@latest/dist/fetch.umd.js"></script>
 <script type="text/javascript" src="https://unpkg.com/@ringcentral/sdk@latest/dist/ringcentral.js"></script>
 <script type="text/javascript" src="https://unpkg.com/@ringcentral/subscriptions@latest/dist/ringcentral-subscriptions.js"></script>
-<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.2.8/build/index.js"></script>
+<script type="text/javascript" src="https://unpkg.com/ringcentral-call-control@0.2.9/build/index.js"></script>
 <script src="./index.js"></script>
 </body>
 </html>
