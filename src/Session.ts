@@ -146,6 +146,10 @@ export interface PickUpParams {
   deviceId: string;
 }
 
+export interface RemovePartyOptions {
+  keepConferenceAlive?: boolean;
+}
+
 function objectEqual(obj1: any, obj2: any) {
   let equal = true;
   if (!obj1 || !obj2) {
@@ -590,10 +594,19 @@ export class Session extends EventEmitter {
     return response.json();
   }
 
-  async removeParty(partyId: string) {
+  async removeParty(partyId: string, options?: RemovePartyOptions) {
+    const requestOptions: {
+      userAgent: string;
+      body?: RemovePartyOptions;
+    } = {
+      ...this.requestOptions,
+    };
+    if (options) {
+      requestOptions.body = options;
+    }
     return await this._sdk.platform().delete(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${partyId}`,
-      this.requestOptions,
+      requestOptions,
     );
   }
 
