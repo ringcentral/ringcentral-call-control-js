@@ -5,9 +5,12 @@ module.exports = {
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'build'),
-    library: 'RingCentralCallControl',
-    libraryTarget: 'umd',
-    libraryExport: 'RingCentralCallControl'
+    library: {
+      name: 'RingCentralCallControl',
+      type: 'umd',
+      export: 'RingCentralCallControl'
+    },
+    globalObject: 'this'
   },
   resolve: {
     extensions: ['.ts', '.js']
