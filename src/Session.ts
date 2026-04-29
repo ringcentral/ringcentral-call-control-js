@@ -602,12 +602,9 @@ export class Session extends EventEmitter {
     } = {
       ...this.requestOptions,
     };
-    if (options) {
-      requestOptions.body = options;
-    }
     return await this._sdk.platform().delete(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${partyId}`,
-      undefined,
+      options,
       undefined,
       requestOptions,
     );
