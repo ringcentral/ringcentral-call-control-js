@@ -18,8 +18,11 @@
     "test": "jest",
     "test:coverage": "yarn test --coverage"
   },
+  "peerDependencies": {
+    "@ringcentral/sdk": "^5.0.6"
+  },
   "devDependencies": {
-    "@ringcentral/sdk": "^4.7.3",
+    "@ringcentral/sdk": "^5.0.6",
     "@types/jest": "^29.5.14",
     "@types/node": "^18.19.0",
     "fetch-mock": "^7.3.9",

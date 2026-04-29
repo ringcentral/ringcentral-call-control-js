@@ -808,10 +808,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@ringcentral/sdk@^4.7.3":
-  version "4.7.3"
-  resolved "https://registry.yarnpkg.com/@ringcentral/sdk/-/sdk-4.7.3.tgz#d0268411d34b45072cdd1e4f6a3124a68d89e286"
-  integrity sha512-bMLfOHfResSd0Auyx4/L6aLR/i6o4vD27sUpJab6A4KgeW2K33EUzBG3bqi6K7ixmf/bsgV7LMhA/KFYcgbYWw==
+"@ringcentral/sdk@^5.0.6":
+  version "5.0.11"
+  resolved "https://registry.yarnpkg.com/@ringcentral/sdk/-/sdk-5.0.11.tgz#a351e2174b8ae0fb82c14d469947a75b290eb707"
+  integrity sha512-Hq6ZUL06CxHGH7jr6D6+eOOdSUFwO5VWPpAbwgyYFGoGyV71nIyZ/qvvnceJbB7E8GOfO/GmYBdAthidNYOCQQ==
   dependencies:
     dom-storage "^2.1.0"
     is-plain-object "^2.0.4"
