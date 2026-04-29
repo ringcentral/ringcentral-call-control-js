@@ -348,6 +348,7 @@ export class Session extends EventEmitter {
       await this._sdk.platform().delete(
         `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}`,
         undefined,
+        undefined,
         this.requestOptions
       );
     } catch (e) {
@@ -606,6 +607,7 @@ export class Session extends EventEmitter {
     }
     return await this._sdk.platform().delete(
       `/restapi/v1.0/account/~/telephony/sessions/${this._data.id}/parties/${partyId}`,
+      undefined,
       undefined,
       requestOptions,
     );
